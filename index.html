@@ -47,6 +47,8 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
 #lock h2{margin:0;font-size:20px;color:var(--navy)}#lock p{margin:0;font-size:13px;color:var(--muted)}
 #lock input[type=password]{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px}
 #lock button{background:var(--blue);color:#fff;border:0;border-radius:8px;padding:10px;font-weight:700}
+.credit{font-size:11px;color:#9AA1BC;text-align:right;padding:2px 22px 14px;letter-spacing:.02em}
+#lock .credit{padding:0;text-align:center;color:#A9AFC6}
 #lock .err{color:#C0392B;font-size:13px;min-height:1em}#lock label{font-size:13px;color:var(--muted)}
 </style></head><body>
 <header>
@@ -64,11 +66,12 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
   <div class="list" id="list"></div>
   <div class="detail" id="detail"><div class="empty">왼쪽에서 문항을 고르세요.</div></div>
 </div>
+<div class="credit">made by. 가운고 김태하</div>
 <div id="lock"><form id="lockf"><h2>기출 찾아보기</h2>
 <p>스터디원 전용 자료입니다. 공유받은 비밀번호를 입력하세요.</p>
 <input type="password" id="pw" autocomplete="current-password" placeholder="비밀번호" required>
 <label><input type="checkbox" id="remember"> 이 기기에서 비밀번호 기억하기</label>
-<button>열기</button><div class="err" id="err"></div></form></div>
+<button>열기</button><div class="err" id="err"></div><div class="credit">made by. 가운고 김태하</div></form></div>
 <script>
 function app(DATA) {
 const Q = DATA.questions, $ = id => document.getElementById(id);

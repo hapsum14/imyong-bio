@@ -14,7 +14,7 @@ select,input[type=search]{font:inherit;font-size:14px;padding:6px 9px;border-rad
 input[type=search]{min-width:200px;flex:1}
 button{font:inherit;cursor:pointer}
 .reset{background:transparent;color:#C9D3EE;border:1px solid #4a5196;border-radius:8px;padding:6px 10px;font-size:13px}
-.wrap{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:16px;padding:16px 20px;align-items:start}
+.wrap{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:16px;padding:16px 20px;align-items:start}
 .stat{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
 .chip{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;background:#E4E8FB;color:var(--navy);white-space:nowrap}
 .chip.dark{background:var(--navy);color:#fff}.chip.warn{background:var(--warn);color:#7a5b00}.chip.ok{background:#DCF5E7;color:#0b6b3a}
@@ -40,7 +40,41 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
 .note{background:var(--warn);border-radius:8px;padding:8px 12px;font-size:13px}
 .empty{color:var(--muted);padding:40px 10px;text-align:center}
 .toggle{background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:13px;color:var(--navy)}
-@media (max-width:820px){.wrap{grid-template-columns:1fr}.list{max-height:40vh}}
+.item{display:flex;gap:8px;align-items:flex-start}.item .b{flex:1;min-width:0}
+.mk{flex:none;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:20px;text-align:center;margin-top:2px;background:#EEF1FA;color:transparent}
+.mk.done{background:#DCF5E7;color:#0b6b3a}.mk.again{background:#FFE7CC;color:#B45309}
+.nav{display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:2;background:var(--card);padding:6px 0 8px;margin:-6px 0 8px;border-bottom:1px solid var(--line)}
+.nav .pos{flex:1;font-size:12px;color:var(--muted);text-align:center}
+.nav button,.marks button{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:13px;color:var(--navy)}
+.nav button:disabled{opacity:.35}
+#back{display:none}
+.marks{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 2px}
+.marks button.on.done{background:#17B26A;border-color:#17B26A;color:#fff}.marks button.on.again{background:#F59E0B;border-color:#F59E0B;color:#fff}
+.bar{flex:1 1 140px;max-width:260px;height:8px;border-radius:99px;background:#E4E8FB;overflow:hidden;align-self:center}
+.bar i{display:block;height:100%;background:var(--green)}
+#fbtn{display:none}
+@media (max-width:820px){
+  body{font-size:15px}
+  header{padding:10px 12px;gap:8px}header h1{font-size:17px}header .sub{font-size:11px}
+  .filters{gap:6px}.filters select,.filters .reset{display:none}
+  .filters.open select,.filters.open .reset{display:block;flex:1 1 46%}
+  select,input[type=search]{font-size:16px;padding:8px 9px}input[type=search]{min-width:0}
+  #fbtn{display:inline-block;background:transparent;color:#fff;border:1px solid #4a5196;border-radius:8px;padding:8px 10px;font-size:14px;white-space:nowrap}
+  .wrap{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}
+  .nav button{padding:7px 9px}.detail h2{overflow-wrap:anywhere}
+  .list{max-height:none}.item{padding:12px}
+  body.detail-open header,body.detail-open .stat,body.detail-open .list,body.detail-open>.credit{display:none}
+  body:not(.detail-open) .detail{display:none}
+  .detail{padding:10px 12px 16px;border-radius:10px;min-height:0}.detail h2{font-size:18px}
+  #back{display:inline-block}
+  .qimg img{max-width:100%;width:100%}.theory img,.psg img{max-width:100%}
+  .answer{font-size:15px}
+  table.refs,table.refs tbody,table.refs tr,table.refs td{display:block;width:100%}
+  table.refs tr:first-child{display:none}
+  table.refs tr{border:1px solid var(--line);border-radius:8px;padding:6px 8px;margin-bottom:8px}
+  table.refs td{border:0;padding:2px 0}table.refs td:nth-child(1){font-weight:700}
+  table.refs td:nth-child(2),table.refs td:nth-child(3){display:inline-block;width:auto;margin-right:8px;font-size:12px;color:var(--muted)}
+}
 @media print{header,.list,.stat,.toggle{display:none}.wrap{display:block;padding:0}.detail{border:0}}
 #lock{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}
 #lock form{background:#fff;border-radius:14px;padding:26px 24px;width:min(380px,100%);display:grid;gap:12px}
@@ -54,11 +88,13 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
 </style></head><body>
 <header>
   <div><h1>기출 찾아보기</h1><div class="sub" id="sub"></div></div>
-  <div class="filters">
+  <div class="filters" id="filters">
+    <input type="search" id="f-q" placeholder="낱말로 찾기 (예: 오페론, Ran)">
+    <button id="fbtn" type="button">조건</button>
+    <select id="f-status"><option value="">표시 전체</option><option value="todo">아직 안 푼 문항</option><option value="done">풀었음</option><option value="again">다시 볼 것</option></select>
     <select id="f-year"></select><select id="f-area"></select><select id="f-unit"></select>
     <select id="f-type"></select><select id="f-strength"></select>
     <select id="f-sort"><option value="recent">최근 학년도순</option><option value="unit">단원순</option><option value="points">배점 높은 순</option></select>
-    <input type="search" id="f-q" placeholder="낱말로 찾기 (예: 오페론, 순환학습, Ran)">
     <button class="reset" id="reset">조건 지우기</button>
   </div>
 </header>
@@ -78,7 +114,14 @@ function app(DATA) {
 const Q = DATA.questions, $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const rich = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
-let hideAnswer = true, current = null;
+// 기기에 남기는 것: 문항별 표시(풀었음/다시 볼 것), 정답 가리기, 마지막으로 쓴 조건. 다른 기기와는 공유되지 않는다.
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+let opened = false;      // 이 화면 안에서 목록 → 문항으로 들어왔는가(그래야 뒤로 가기가 목록으로 돌아간다)
+let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null;
+const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-strength", "f-sort"];
 document.getElementById("sub").textContent = DATA.title + " · " + Q.length + "문항";
 function options(el, label, values) {
   el.innerHTML = `<option value="">${label} 전체</option>` + values.map(v => `<option>${esc(v)}</option>`).join("");
@@ -91,11 +134,14 @@ options($("f-strength"), "근거", ["직접", "부분", "배경", "근거 없음
 $("f-unit").innerHTML = `<option value="">단원 전체</option>` + DATA.parts.map(p =>
   `<optgroup label="${esc(p.part)}"><option value="P:${esc(p.part)}">${esc(p.part)} 전체</option>` +
   p.units.map(u => `<option value="U:${esc(u.id)}">${esc(u.chapter)}</option>`).join("") + `</optgroup>`).join("");
+const saved = store.get("imyong-filters", {});
+FIDS.forEach(id => { if (saved[id] != null && [...$(id).options].some(o => o.value === saved[id])) $(id).value = saved[id]; });
 function filtered() {
-  const y = $("f-year").value, a = $("f-area").value, u = $("f-unit").value, t = $("f-type").value,
+  const y = $("f-year").value, a = $("f-area").value, u = $("f-unit").value, t = $("f-type").value, st = $("f-status").value,
         s = $("f-strength").value, words = $("f-q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let out = Q.filter(q => (!y || String(q.year) === y) && (!a || q.area === a) && (!t || q.type === t) &&
     (!s || q.strength === s) && (!u || (u[0] === "P" ? q.part === u.slice(2) : q.unit === u.slice(2))) &&
+    (!st || (st === "todo" ? !marks[q.id] : marks[q.id] === st)) &&
     words.every(w => q.hay.includes(w)));
   const sort = $("f-sort").value;
   if (sort === "recent") out.sort((p, q) => q.year - p.year || p.order - q.order);
@@ -106,39 +152,65 @@ function filtered() {
 function render() {
   const rows = filtered(), sort = $("f-sort").value;
   const pts = rows.reduce((n, q) => n + (q.points || 0), 0);
-  const areas = {}; rows.forEach(q => areas[q.area] = (areas[q.area] || 0) + 1);
+  const done = Q.filter(q => marks[q.id] === "done").length, again = Q.filter(q => marks[q.id] === "again").length;
+  const active = FIDS.filter(id => id !== "f-sort" && $(id).value).length;
+  $("fbtn").textContent = active ? `조건 ${active}` : "조건";
   $("stat").innerHTML = `<span class="chip dark">${rows.length}문항 · ${pts}점</span>` +
-    Object.entries(areas).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<span class="chip">${esc(k)} ${v}</span>`).join("") +
+    `<span class="chip ok">풀었음 ${done}/${Q.length}</span>` + (again ? `<span class="chip warn">다시 볼 것 ${again}</span>` : "") +
+    `<span class="bar" title="풀었음 ${done}/${Q.length}"><i style="width:${Q.length ? 100 * done / Q.length : 0}%"></i></span>` +
     `<button class="toggle" id="tg">${hideAnswer ? "정답 가리는 중 (눌러서 항상 보기)" : "정답 보이는 중 (눌러서 가리기)"}</button>`;
-  $("tg").onclick = () => { hideAnswer = !hideAnswer; render(); if (current) show(current); };
+  $("tg").onclick = () => { hideAnswer = !hideAnswer; store.set("imyong-hide", hideAnswer); render(); if (document.body.classList.contains("detail-open") || current) show(current, true); };
   let html = "", last = null;
   rows.forEach(q => {
     const g = sort === "unit" ? q.part + " › " + q.chapter : q.year + "학년도";
     if (g !== last && sort !== "points") { html += `<div class="group">${esc(g)}</div>`; last = g; }
-    html += `<div class="item${current === q.id ? " on" : ""}" data-id="${esc(q.id)}"><div class="t">${esc(q.topic)}</div>` +
-      `<div class="m">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · ${esc(sort === "unit" ? q.area : q.chapter)}</div></div>`;
+    const mk = marks[q.id];
+    html += `<div class="item${current === q.id ? " on" : ""}" data-id="${esc(q.id)}">` +
+      `<span class="mk ${mk || ""}" title="${mk === "done" ? "풀었음" : mk === "again" ? "다시 볼 것" : ""}">${mk === "done" ? "✓" : mk === "again" ? "↻" : "·"}</span>` +
+      `<div class="b"><div class="t">${esc(q.topic)}</div>` +
+      `<div class="m">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · ${esc(sort === "unit" ? q.area : q.chapter)}</div></div></div>`;
   });
   $("list").innerHTML = html || `<div class="empty">조건에 맞는 문항이 없습니다.</div>`;
-  $("list").querySelectorAll(".item").forEach(el => el.onclick = () => { current = el.dataset.id; render(); show(current); });
+  $("list").querySelectorAll(".item").forEach(el => el.onclick = () => go(el.dataset.id));
 }
+// 문항을 열면 주소 끝에 #q=문항 이 붙는다. 휴대폰의 '뒤로'가 목록으로 돌아가고, 문항 주소를 그대로 공유할 수 있다.
+function go(id, replace) {
+  const h = "#q=" + encodeURIComponent(id);
+  if (replace) { history.replaceState(null, "", h); route(); } else { opened = true; location.hash = h; }
+}
+function route() {
+  const m = /^#q=(.+)$/.exec(location.hash), id = m && decodeURIComponent(m[1]);
+  if (id && Q.some(q => q.id === id)) {
+    current = id; document.body.classList.add("detail-open"); render(); show(id);
+  } else {
+    document.body.classList.remove("detail-open"); render();
+    const on = $("list").querySelector(".item.on"); if (on) on.scrollIntoView({block: "center"});
+  }
+}
+window.addEventListener("hashchange", route);
 function blocks(list) {
   return list.map(b => typeof b === "string"
     ? b.split("\n").map(t => t.startsWith("<") ? `<p class="h">${esc(t.replace(/^<|>$/g, ""))}</p>` : `<p>${rich(t)}</p>`).join("")
     : `<img data-src="${esc(b.figure)}" alt=""><div class="cap">${esc(b.caption || "")}</div>`).join("");
 }
-function show(id) {
+function show(id, keepScroll) {
   const q = Q.find(x => x.id === id); if (!q) return;
   const sc = q.strength === "직접" ? "ok" : "warn";
+  const rows = filtered(), at = rows.findIndex(x => x.id === id), mk = marks[id];
   $("detail").innerHTML =
+    `<div class="nav"><button id="back">← 목록</button><span class="pos">${at >= 0 ? `${at + 1} / ${rows.length}` : ""}</span>` +
+    `<button id="prev" ${at > 0 ? "" : "disabled"}>‹ 이전</button><button id="next" ${at >= 0 && at < rows.length - 1 ? "" : "disabled"}>다음 ›</button></div>` +
     `<span class="chip dark">${esc(q.title)}</span> <span class="chip">${esc(q.type)} · ${q.points}점</span> ` +
     `<span class="chip">${esc(q.part)} › ${esc(q.chapter)}</span> <span class="chip ${sc}">근거 ${esc(q.strength)}</span>` +
     (q.confidence ? ` <span class="chip ${q.confidence === "높음" ? "ok" : "warn"}">신뢰도 ${esc(q.confidence)}</span>` : "") +
     `<h2>${esc(q.topic)}</h2>` +
+    `<div class="marks"><button id="m-done" class="done${mk === "done" ? " on" : ""}">✓ 풀었음</button>` +
+    `<button id="m-again" class="again${mk === "again" ? " on" : ""}">↻ 다시 볼 것</button></div>` +
     `<div class="sec"><h3>문제</h3><div class="qimg">${q.images.map(i => `<img data-src="${esc(i)}" alt="문제">`).join("") || esc(q.summary)}</div></div>` +
     `<div class="sec"><h3>정답 (예시)</h3><div class="answer${hideAnswer ? " hide" : ""}" id="ans">${esc(q.answer)}</div></div>` +
     `<div class="sec sol" id="sol" ${hideAnswer ? "hidden" : ""}><h3>문제해결과정</h3>${blocks([q.solution])}</div>` +
     `<div class="sec theory"><h3>관련 이론정리</h3>${blocks(q.theory)}</div>` +
-    `<div class="sec"><h3>관련 참고 문헌</h3><table><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
+    `<div class="sec"><h3>관련 참고 문헌</h3><table class="refs"><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
       q.refs.map(r => `<tr><td>${esc(r.book)}</td><td>p.${esc(r.pages)}</td><td>${esc(r.strength)}</td><td>${esc(r.evidence)}${r.passages.length ? `<div class="psg"><div class="cap">교재 원문 (빨간 밑줄이 근거 문장)</div>${r.passages.map(p => `<img data-src="${esc(p)}" alt="교재 원문">`).join("")}</div>` : ""}</td></tr>`).join("") + `</table></div>` +
     (q.supplement.length ? `<div class="sec"><h3>개론서에 없는 용어</h3><table><tr><th>용어</th><th>다른 책</th><th>메모</th></tr>` +
       q.supplement.map(x => `<tr><td><b>${esc(x.term)}</b></td><td>${esc(x.where || "없음")}</td><td>${esc(x.note)}</td></tr>`).join("") + `</table></div>` : "") +
@@ -147,12 +219,20 @@ function show(id) {
   hydrate($("detail"));
   const ans = $("ans");
   ans.onclick = () => { ans.classList.remove("hide"); $("sol").hidden = false; };
-  window.scrollTo({top: 0});
+  $("back").onclick = () => { if (opened) history.back(); else { history.replaceState(null, "", location.pathname + location.search); route(); } };
+  $("prev").onclick = () => at > 0 && go(rows[at - 1].id, true);
+  $("next").onclick = () => at < rows.length - 1 && go(rows[at + 1].id, true);
+  const mark = v => { if (marks[id] === v) delete marks[id]; else marks[id] = v; store.set("imyong-marks", marks); render(); show(id, true); };
+  $("m-done").onclick = () => mark("done");
+  $("m-again").onclick = () => mark("again");
+  if (!keepScroll) window.scrollTo({top: 0});
 }
-["f-year", "f-area", "f-unit", "f-type", "f-strength", "f-sort"].forEach(id => $(id).onchange = render);
+const changed = () => { const f = {}; FIDS.forEach(id => f[id] = $(id).value); store.set("imyong-filters", f); render(); };
+FIDS.forEach(id => $(id).onchange = changed);
 $("f-q").oninput = render;
-$("reset").onclick = () => { document.querySelectorAll("select").forEach(s => s.selectedIndex = 0); $("f-q").value = ""; render(); };
-render();
+$("fbtn").onclick = () => $("filters").classList.toggle("open");
+$("reset").onclick = () => { FIDS.forEach(id => $(id).selectedIndex = 0); $("f-q").value = ""; changed(); };
+route();
 }
 function hydrate(root) {
   root.querySelectorAll("img[data-src]").forEach(async im => {

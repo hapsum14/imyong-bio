@@ -28,7 +28,7 @@ button{font:inherit;cursor:pointer}
 .sec{margin-top:18px}.sec h3{font-size:14px;margin:0 0 8px;color:var(--blue)}
 .qimg{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
 .qimg img{max-width:min(100%,560px);border:1px solid var(--line);border-radius:6px}
-.answer{background:var(--navy);color:#fff;border-radius:10px;padding:12px 16px;font-weight:700;font-size:16px}
+.answer{background:var(--navy);color:#fff;border-radius:10px;padding:12px 16px;font-weight:700;font-size:16px;white-space:pre-line}
 .answer.hide{color:transparent;background:#C9D3EE;user-select:none;cursor:pointer;position:relative}
 .answer.hide::after{content:"눌러서 정답 보기";color:var(--navy);position:absolute;left:16px;top:12px;font-weight:700}
 .sol p,.theory p{margin:6px 0}.theory .h{font-weight:700;color:var(--navy);margin-top:12px}
@@ -39,6 +39,14 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid 
 th{background:#EEF1FA;font-size:12px;white-space:nowrap}
 .note{background:var(--warn);border-radius:8px;padding:8px 12px;font-size:13px}
 .empty{color:var(--muted);padding:40px 10px;text-align:center}
+.note .k,.item .k{display:inline-block;border-radius:6px;padding:0 6px;font-size:11px;font-weight:700;margin-right:4px;white-space:nowrap}
+.k.split{background:#FAD7D7;color:#9B1C1C}.k.nobook{background:#E4E8FB;color:#1E2353}.k.unoff{background:#ECECEC;color:#555}.k.read{background:#FFE7CC;color:#8A4B00}
+.score{font-size:13px;color:var(--muted);margin-top:8px}.score b{color:var(--navy)}
+.detail img{cursor:zoom-in}
+#zoom{position:fixed;inset:0;z-index:20;background:rgba(15,18,45,.92);overflow:auto;-webkit-overflow-scrolling:touch;display:none;cursor:zoom-out}
+#zoom.on{display:block}#zoom img{display:block;margin:0 auto;background:#fff;max-width:none}
+#zoom .zx{position:fixed;right:12px;top:12px;z-index:21;background:#fff;border:0;border-radius:999px;width:40px;height:40px;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#zoom .zh{position:fixed;left:12px;bottom:12px;z-index:21;background:rgba(255,255,255,.9);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--navy)}
 .toggle{background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:13px;color:var(--navy)}
 .item{display:flex;gap:8px;align-items:flex-start}.item .b{flex:1;min-width:0}
 .mk{flex:none;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:20px;text-align:center;margin-top:2px;background:#EEF1FA;color:transparent}
@@ -94,6 +102,7 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
     <select id="f-status"><option value="">표시 전체</option><option value="todo">아직 안 푼 문항</option><option value="done">풀었음</option><option value="again">다시 볼 것</option></select>
     <select id="f-year"></select><select id="f-area"></select><select id="f-unit"></select>
     <select id="f-type"></select><select id="f-strength"></select>
+    <select id="f-flag"><option value="">확인 필요 전체</option><option value="답이 갈릴 수 있음">답이 갈릴 수 있음</option><option value="판독·추정">판독·추정</option><option value="책에 없는 내용">책에 없는 내용</option><option value="공식 정답 미확인">공식 정답 미확인</option><option value="low">신뢰도 보통·낮음</option><option value="none">확인 필요 없음</option></select>
     <select id="f-sort"><option value="recent">최근 학년도순</option><option value="unit">단원순</option><option value="points">배점 높은 순</option></select>
     <button class="reset" id="reset">조건 지우기</button>
   </div>
@@ -104,6 +113,7 @@ th{background:#EEF1FA;font-size:12px;white-space:nowrap}
   <div class="detail" id="detail"><div class="empty">왼쪽에서 문항을 고르세요.</div></div>
 </div>
 <div class="credit"><b>made by. 가운고 김태하</b>무단 배포 시 공유가 중지될 수 있습니다.</div>
+<div id="zoom"><button class="zx" type="button" aria-label="닫기">×</button><div class="zh">눌러서 닫기 · 두 손가락으로 더 확대</div><img alt=""></div>
 <div id="lock"><form id="lockf"><h2>기출 찾아보기</h2>
 <p>스터디원 전용 자료입니다. 공유받은 비밀번호를 입력하세요.</p>
 <input type="password" id="pw" autocomplete="current-password" placeholder="비밀번호" required>
@@ -121,14 +131,18 @@ const store = {
 };
 let opened = false;      // 이 화면 안에서 목록 → 문항으로 들어왔는가(그래야 뒤로 가기가 목록으로 돌아간다)
 let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null;
-const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-strength", "f-sort"];
+const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-strength", "f-flag", "f-sort"];
+const KCLS = {"답이 갈릴 수 있음": "split", "책에 없는 내용": "nobook", "공식 정답 미확인": "unoff", "판독·추정": "read"};
+const kinds = (q, only) => q.kinds.filter(k => !only || only.includes(k)).map(k => `<span class="k ${KCLS[k]}">${esc(k)}</span>`).join("");
+const PARTIAL = new Set(DATA.partialAreas || []);
 document.getElementById("sub").textContent = DATA.title + " · " + Q.length + "문항";
 function options(el, label, values) {
   el.innerHTML = `<option value="">${label} 전체</option>` + values.map(v => `<option>${esc(v)}</option>`).join("");
 }
 const uniq = a => [...new Set(a.filter(x => x !== "" && x != null))];
 options($("f-year"), "학년도", uniq(Q.map(q => q.year)).sort((a, b) => b - a));
-options($("f-area"), "영역", uniq(Q.map(q => q.area)).sort());
+$("f-area").innerHTML = `<option value="">영역 전체</option>` + uniq(Q.map(q => q.area)).sort((a, b) => PARTIAL.has(a) - PARTIAL.has(b) || a.localeCompare(b))
+  .map(v => `<option value="${esc(v)}">${esc(v)}${PARTIAL.has(v) ? " (쌓는 중)" : ""}</option>`).join("");
 options($("f-type"), "유형", uniq(Q.map(q => q.type)));
 options($("f-strength"), "근거", ["직접", "부분", "배경", "근거 없음"]);
 $("f-unit").innerHTML = `<option value="">단원 전체</option>` + DATA.parts.map(p =>
@@ -138,10 +152,11 @@ const saved = store.get("imyong-filters", {});
 FIDS.forEach(id => { if (saved[id] != null && [...$(id).options].some(o => o.value === saved[id])) $(id).value = saved[id]; });
 function filtered() {
   const y = $("f-year").value, a = $("f-area").value, u = $("f-unit").value, t = $("f-type").value, st = $("f-status").value,
-        s = $("f-strength").value, words = $("f-q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        s = $("f-strength").value, fl = $("f-flag").value, words = $("f-q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let out = Q.filter(q => (!y || String(q.year) === y) && (!a || q.area === a) && (!t || q.type === t) &&
     (!s || q.strength === s) && (!u || (u[0] === "P" ? q.part === u.slice(2) : q.unit === u.slice(2))) &&
     (!st || (st === "todo" ? !marks[q.id] : marks[q.id] === st)) &&
+    (!fl || (fl === "low" ? q.confidence && q.confidence !== "높음" : fl === "none" ? !q.kinds.length : q.kinds.includes(fl))) &&
     words.every(w => q.hay.includes(w)));
   const sort = $("f-sort").value;
   if (sort === "recent") out.sort((p, q) => q.year - p.year || p.order - q.order);
@@ -168,7 +183,8 @@ function render() {
     html += `<div class="item${current === q.id ? " on" : ""}" data-id="${esc(q.id)}">` +
       `<span class="mk ${mk || ""}" title="${mk === "done" ? "풀었음" : mk === "again" ? "다시 볼 것" : ""}">${mk === "done" ? "✓" : mk === "again" ? "↻" : "·"}</span>` +
       `<div class="b"><div class="t">${esc(q.topic)}</div>` +
-      `<div class="m">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · ${esc(sort === "unit" ? q.area : q.chapter)}</div></div></div>`;
+      `<div class="m">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · ${esc(sort === "unit" ? q.area : q.chapter)}</div>` +
+      (q.kinds.includes("답이 갈릴 수 있음") ? `<div class="m">${kinds(q, ["답이 갈릴 수 있음"])}</div>` : "") + `</div></div>`;
   });
   $("list").innerHTML = html || `<div class="empty">조건에 맞는 문항이 없습니다.</div>`;
   $("list").querySelectorAll(".item").forEach(el => el.onclick = () => go(el.dataset.id));
@@ -182,6 +198,8 @@ function route() {
   const m = /^#q=(.+)$/.exec(location.hash), id = m && decodeURIComponent(m[1]);
   if (id && Q.some(q => q.id === id)) {
     current = id; document.body.classList.add("detail-open"); render(); show(id);
+    const L = $("list"), on = L.querySelector(".item.on");      // 넓은 화면: 왼쪽 목록이 지금 보는 문항을 따라간다
+    if (on && L.scrollHeight > L.clientHeight) { const a = on.offsetTop - L.offsetTop; if (a < L.scrollTop + 30 || a > L.scrollTop + L.clientHeight - 80) L.scrollTop = a - L.clientHeight / 3; }
   } else {
     document.body.classList.remove("detail-open"); render();
     const on = $("list").querySelector(".item.on"); if (on) on.scrollIntoView({block: "center"});
@@ -208,17 +226,20 @@ function show(id, keepScroll) {
     `<button id="m-again" class="again${mk === "again" ? " on" : ""}">↻ 다시 볼 것</button></div>` +
     `<div class="sec"><h3>문제</h3><div class="qimg">${q.images.map(i => `<img data-src="${esc(i)}" alt="문제">`).join("") || esc(q.summary)}</div></div>` +
     `<div class="sec"><h3>정답 (예시)</h3><div class="answer${hideAnswer ? " hide" : ""}" id="ans">${esc(q.answer)}</div></div>` +
-    `<div class="sec sol" id="sol" ${hideAnswer ? "hidden" : ""}><h3>문제해결과정</h3>${blocks([q.solution])}</div>` +
+    `<div class="sec sol" id="sol" ${hideAnswer ? "hidden" : ""}><h3>문제해결과정</h3>${blocks([q.solution])}` +
+      (q.scoring.length ? `<div class="score"><b>채점 요소(추정)</b> ${q.scoring.map(esc).join(" · ")}</div>` : "") +
+      (q.note || q.kinds.length ? `<div class="note" style="margin-top:10px"><b>확인 필요</b> ${kinds(q)}${q.note ? "<br>" + esc(q.note) : ""}` +
+        (q.supplement.length ? `<br>책에 없는 내용: ${q.supplement.map(x => esc(x.term)).join(", ")} (아래 표)` : "") + `</div>` : "") + `</div>` +
     `<div class="sec theory"><h3>관련 이론정리</h3>${blocks(q.theory)}</div>` +
     `<div class="sec"><h3>관련 참고 문헌</h3><table class="refs"><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
       q.refs.map(r => `<tr><td>${esc(r.book)}</td><td>p.${esc(r.pages)}</td><td>${esc(r.strength)}</td><td>${esc(r.evidence)}${r.passages.length ? `<div class="psg"><div class="cap">교재 원문 (빨간 밑줄이 근거 문장)</div>${r.passages.map(p => `<img data-src="${esc(p)}" alt="교재 원문">`).join("")}</div>` : ""}</td></tr>`).join("") + `</table></div>` +
     (q.supplement.length ? `<div class="sec"><h3>개론서에 없는 용어</h3><table><tr><th>용어</th><th>다른 책</th><th>메모</th></tr>` +
       q.supplement.map(x => `<tr><td><b>${esc(x.term)}</b></td><td>${esc(x.where || "없음")}</td><td>${esc(x.note)}</td></tr>`).join("") + `</table></div>` : "") +
-    (q.note ? `<div class="sec note"><b>확인 필요</b> ${esc(q.note)}</div>` : "") +
     `<div class="sec cap">예시 답안은 개론서를 근거로 작성한 것이며 공식 정답이 아닙니다.</div>`;
   hydrate($("detail"));
   const ans = $("ans");
   ans.onclick = () => { ans.classList.remove("hide"); $("sol").hidden = false; };
+  $("detail").querySelectorAll("img").forEach(im => im.onclick = () => zoom(im));
   $("back").onclick = () => { if (opened) history.back(); else { history.replaceState(null, "", location.pathname + location.search); route(); } };
   $("prev").onclick = () => at > 0 && go(rows[at - 1].id, true);
   $("next").onclick = () => at < rows.length - 1 && go(rows[at + 1].id, true);
@@ -233,6 +254,16 @@ $("f-q").oninput = render;
 $("fbtn").onclick = () => $("filters").classList.toggle("open");
 $("reset").onclick = () => { FIDS.forEach(id => $(id).selectedIndex = 0); $("f-q").value = ""; changed(); };
 route();
+}
+// 그림을 누르면 화면 가득 크게 본다(휴대폰에서 시험지·교재 글씨가 작을 때). 한 번 더 누르면 닫힌다.
+function zoom(im) {
+  const z = document.getElementById("zoom"), zi = z.querySelector("img");
+  if (!im.src) return;
+  zi.src = im.src;
+  const w = Math.max(window.innerWidth, Math.min(im.naturalWidth * 1.6, 1600));
+  zi.style.width = (im.naturalWidth && im.naturalWidth * 1.6 < window.innerWidth ? im.naturalWidth * 1.6 : w) + "px";
+  z.classList.add("on"); z.scrollTop = 0; z.scrollLeft = 0; document.body.style.overflow = "hidden";
+  z.onclick = () => { z.classList.remove("on"); document.body.style.overflow = ""; };
 }
 function hydrate(root) {
   root.querySelectorAll("img[data-src]").forEach(async im => {

@@ -125,10 +125,14 @@ header{display:block;padding:12px 20px 10px}
 .mini{background:transparent;border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:11px;color:var(--muted);margin-left:8px;font-weight:400}
 .stat{align-items:center}.stat .cnt{font-weight:700;color:var(--ink);font-size:14px}
 #print{display:none}
+.filters .adv{display:none}.filters.adv-on .adv{display:inline-block}
+details.fold>summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--blue);padding:4px 0;list-style-position:inside}
+details.fold[open]>summary{margin-bottom:8px}details.fold>summary span{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
+body.dark details.fold>summary{color:#aab4ff}
 @media (max-width:820px){
   header{padding:10px 12px 8px}.top{flex-wrap:wrap;gap:8px}.brand{flex:1}.brand .sub{display:none}
   .top input[type=search]{order:3;flex:1 1 100%;font-size:16px}.hbtn{padding:7px 10px}
-  .filters .lab{display:none}.filters.open .lab{display:none}
+  .filters .lab{display:none}.filters.open .lab{display:none}#advbtn{display:none!important}
 }
 @media print{
   body.printing>*:not(#print){display:none!important}
@@ -150,10 +154,11 @@ header{display:block;padding:12px 20px 10px}
     <button id="fbtn" type="button">범위 고르기</button>
     <span class="lab">범위</span>
     <select id="f-area" title="영역(과목)"></select><select id="f-year" title="학년도"></select><select id="f-unit" title="단원"></select>
-    <select id="f-type" title="문항 유형"></select>
-    <select id="f-flag" title="확인 필요"><option value="">확인 필요 전체</option><option value="답이 갈릴 수 있음">답이 갈릴 수 있음</option><option value="판독·추정">판독·추정</option><option value="책에 없는 내용">책에 없는 내용</option><option value="공식 정답 미확인">공식 정답 미확인</option><option value="low">신뢰도 보통·낮음</option><option value="none">확인 필요 없음</option></select>
+    <select id="f-type" class="adv" title="문항 유형"></select>
+    <select id="f-flag" class="adv" title="확인 필요"><option value="">확인 필요 전체</option><option value="답이 갈릴 수 있음">답이 갈릴 수 있음</option><option value="판독·추정">판독·추정</option><option value="책에 없는 내용">책에 없는 내용</option><option value="공식 정답 미확인">공식 정답 미확인</option><option value="low">신뢰도 보통·낮음</option><option value="none">확인 필요 없음</option></select>
     <span class="lab">순서</span>
     <select id="f-sort" title="순서"><option value="recent">최근 학년도순</option><option value="unit">단원순</option><option value="points">배점 높은 순</option><option value="random">무작위(섞어 풀기)</option></select>
+    <button class="reset" id="advbtn" type="button" title="유형, 확인 필요로 더 좁히기">더 보기</button>
     <button class="reset" id="reset" type="button">범위 지우기</button>
     <select id="f-status" hidden><option value=""></option><option value="todo"></option><option value="again"></option><option value="due"></option><option value="done"></option></select>
   </div>
@@ -236,6 +241,8 @@ function render() {
   const active = FIDS.filter(id => id !== "f-sort" && id !== "f-status" && $(id).value).length;
   $("fbtn").textContent = active ? `범위 고르기 (${active})` : "범위 고르기";
   $("reset").style.visibility = active ? "" : "hidden";
+  if ($("f-type").value || $("f-flag").value) $("filters").classList.add("adv-on");
+  $("advbtn").textContent = $("filters").classList.contains("adv-on") ? "접기" : "더 보기";
   const st = $("f-status").value, nDue = Q.filter(q => due(q.id)).length;
   $("tabs").innerHTML = [["", "전체", Q.length], ["todo", "안 푼 문항", Q.length - done - again], ["again", "다시 볼 것", again], ["due", "오늘 복습", nDue], ["done", "풀었음", done]]
     .map(([v, t, n]) => `<button type="button" data-v="${v}" class="${st === v ? "on" : ""}${v === "due" && nDue ? " due" : ""}">${t}<b>${n}</b></button>`).join("");
@@ -300,13 +307,15 @@ function show(id, keepScroll) {
       (q.note || q.kinds.length ? `<div class="note" style="margin-top:10px"><b>확인 필요</b> ${kinds(q)}${q.note ? "<br>" + esc(q.note) : ""}` +
         (q.supplement.length ? `<br>책에 없는 내용: ${q.supplement.map(x => esc(x.term)).join(", ")} (아래 표)` : "") + `</div>` : "") + `</div>` +
     `<div class="sec theory"><h3>관련 이론정리</h3>${blocks(q.theory)}</div>` +
-    `<div class="sec"><h3>관련 참고 문헌</h3><table class="refs"><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
-      q.refs.map(r => `<tr><td>${esc(r.book)}</td><td>p.${esc(r.pages)}</td><td>${esc(r.strength)}</td><td>${esc(r.evidence)}${r.passages.length ? `<div class="psg"><div class="cap">교재 원문 (빨간 밑줄이 근거 문장)</div>${r.passages.map(p => `<img data-src="${esc(p)}" alt="교재 원문">`).join("")}</div>` : ""}</td></tr>`).join("") + `</table></div>` +
-    (q.supplement.length ? `<div class="sec"><h3>개론서에 없는 용어</h3><table><tr><th>용어</th><th>다른 책</th><th>메모</th></tr>` +
-      q.supplement.map(x => `<tr><td><b>${esc(x.term)}</b></td><td>${esc(x.where || "없음")}</td><td>${esc(x.note)}</td></tr>`).join("") + `</table></div>` : "") +
+    `<details class="sec fold" data-k="refs"><summary>관련 참고 문헌 · 교재 원문<span>${q.refs.length}곳 · 눌러서 펼치기</span></summary><table class="refs"><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
+      q.refs.map(r => `<tr><td>${esc(r.book)}</td><td>p.${esc(r.pages)}</td><td>${esc(r.strength)}</td><td>${esc(r.evidence)}${r.passages.length ? `<div class="psg"><div class="cap">교재 원문 (빨간 밑줄이 근거 문장)</div>${r.passages.map(p => `<img data-src="${esc(p)}" alt="교재 원문">`).join("")}</div>` : ""}</td></tr>`).join("") + `</table></details>` +
+    (q.supplement.length ? `<details class="sec fold" data-k="sup"><summary>개론서에 없는 용어<span>${q.supplement.length}개</span></summary><table><tr><th>용어</th><th>다른 책</th><th>메모</th></tr>` +
+      q.supplement.map(x => `<tr><td><b>${esc(x.term)}</b></td><td>${esc(x.where || "없음")}</td><td>${esc(x.note)}</td></tr>`).join("") + `</table></details>` : "") +
     `<div class="sec memo"><h3>내 메모</h3><textarea id="memo" placeholder="헷갈린 점, 외울 것을 적어 두세요. 이 기기에만 저장됩니다.">${esc(notes[id] || "")}</textarea></div>` +
     `<div class="sec cap">예시 답안은 개론서를 근거로 작성한 것이며 공식 정답이 아닙니다.</div>`;
   hydrate($("detail"));
+  // 접어 둔 표는 한 번 펼치면 다음 문항에서도 펼친 채로 둔다
+  $("detail").querySelectorAll("details.fold").forEach(d => { d.open = store.get("imyong-fold-" + d.dataset.k, false); d.ontoggle = () => store.set("imyong-fold-" + d.dataset.k, d.open); });
   const ans = $("ans");
   ans.onclick = () => { ans.classList.remove("hide"); $("sol").hidden = false; };
   $("tg").onclick = () => { hideAnswer = !hideAnswer; store.set("imyong-hide", hideAnswer); show(id, true); };
@@ -332,6 +341,7 @@ FIDS.forEach(id => $(id).onchange = changed);
 $("f-sort").onchange = () => { if ($("f-sort").value === "random") shuffle(); changed(); };
 $("f-q").oninput = () => { render(); if (current && $("ans")) show(current, true); };
 $("fbtn").onclick = () => $("filters").classList.toggle("open");
+$("advbtn").onclick = () => { $("filters").classList.toggle("adv-on"); render(); };
 $("reset").onclick = () => { FIDS.filter(id => id !== "f-status" && id !== "f-sort").forEach(id => $(id).selectedIndex = 0); changed(); };
 function openRec() {
   const areas = uniq(Q.map(q => q.area)).sort();

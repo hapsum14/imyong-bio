@@ -111,19 +111,51 @@ body.dark .item:hover{background:#23264a}body.dark .item.on{background:#2d3166}b
 body.dark .nav button,body.dark .marks button,body.dark .toggle,body.dark select,body.dark input[type=search],body.dark .bnav button{background:#23264a;color:#E8EAF6;border-color:#3b3f6b}
 body.dark .note{color:#f3e7b0}body.dark .theory .h,body.dark .sec h3{color:#aab4ff}body.dark .detail img{background:#fff}body.dark .mk{background:#2a2e58}
 body.dark .answer.hide{background:#3b3f6b}body.dark .answer.hide::after{color:#E8EAF6}body.dark .score b{color:#aab4ff}body.dark mark{background:#7a6a12;color:#fff}
+/* ---- 머리 부분: 첫 줄 = 제목·검색·내 기록, 둘째 줄 = 무엇을 풀지(탭), 셋째 줄 = 범위 좁히기 */
+header{display:block;padding:12px 20px 10px}
+.top{display:flex;gap:12px;align-items:center}.brand{white-space:nowrap}
+.top input[type=search]{flex:1;min-width:0;padding:9px 12px;font-size:15px;border:0;border-radius:10px}
+.hbtn{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:10px;padding:9px 12px;font-size:13px;white-space:nowrap}
+.tabs{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:transparent;color:#C9D3EE;border:1px solid #4a5196;border-radius:999px;padding:6px 13px;font-size:13px;white-space:nowrap}
+.tabs button.on{background:#fff;color:var(--navy);border-color:#fff;font-weight:700}.tabs button b{margin-left:5px;font-weight:700}
+.tabs button.due:not(.on) b{background:var(--pink);color:#fff;border-radius:999px;padding:0 6px}
+.filters{margin-top:8px;flex:none}.filters .lab{font-size:12px;color:#C9D3EE;margin-right:-2px}
+.filters select{background:rgba(255,255,255,.1);color:#fff;border-color:#4a5196;padding:5px 8px;font-size:13px}.filters select option,.filters select optgroup{color:#1B1F3B;background:#fff}
+.mini{background:transparent;border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:11px;color:var(--muted);margin-left:8px;font-weight:400}
+.stat{align-items:center}.stat .cnt{font-weight:700;color:var(--ink);font-size:14px}
+#print{display:none}
+@media (max-width:820px){
+  header{padding:10px 12px 8px}.top{flex-wrap:wrap;gap:8px}.brand{flex:1}.brand .sub{display:none}
+  .top input[type=search]{order:3;flex:1 1 100%;font-size:16px}.hbtn{padding:7px 10px}
+  .filters .lab{display:none}.filters.open .lab{display:none}
+}
+@media print{
+  body.printing>*:not(#print){display:none!important}
+  body.printing #print{display:block;color:#000;font-size:12pt}
+  #print h1{font-size:16pt;margin:0 0 8pt}#print .pq{break-inside:avoid;border-top:1px solid #999;padding:8pt 0}
+  #print .pq h2{font-size:12pt;margin:0 0 4pt}#print img{max-width:48%;margin:2pt}#print .pa{font-weight:700;white-space:pre-line;margin:4pt 0}
+  #print .pm{border:1px dashed #999;padding:4pt 6pt;margin-top:4pt;white-space:pre-wrap}#print p{margin:2pt 0}
+}
 </style></head><body>
 <header>
-  <div><h1>기출 찾아보기</h1><div class="sub" id="sub"></div></div>
+  <div class="top">
+    <div class="brand"><h1>기출 찾아보기</h1><div class="sub" id="sub"></div></div>
+    <input type="search" id="f-q" placeholder="낱말로 찾기 (예: 오페론, 시스템, 2022 A6)">
+    <button class="hbtn" id="more" type="button">내 기록</button>
+    <button class="hbtn" id="dark" type="button">어둡게</button>
+  </div>
+  <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters">
-    <input type="search" id="f-q" placeholder="낱말로 찾기 (예: 오페론, Ran)">
-    <button id="fbtn" type="button">조건</button>
-    <select id="f-status"><option value="">표시 전체</option><option value="todo">아직 안 푼 문항</option><option value="done">풀었음</option><option value="again">다시 볼 것</option></select>
-    <select id="f-year"></select><select id="f-area"></select><select id="f-unit"></select>
-    <select id="f-type"></select><select id="f-strength"></select>
-    <select id="f-flag"><option value="">확인 필요 전체</option><option value="답이 갈릴 수 있음">답이 갈릴 수 있음</option><option value="판독·추정">판독·추정</option><option value="책에 없는 내용">책에 없는 내용</option><option value="공식 정답 미확인">공식 정답 미확인</option><option value="low">신뢰도 보통·낮음</option><option value="none">확인 필요 없음</option></select>
-    <select id="f-sort"><option value="recent">최근 학년도순</option><option value="unit">단원순</option><option value="points">배점 높은 순</option><option value="random">무작위(섞어 풀기)</option></select>
-    <button class="reset" id="reset">조건 지우기</button>
-    <button class="reset" id="more" type="button">내 기록</button><button class="reset" id="dark" type="button">어둡게</button>
+    <button id="fbtn" type="button">범위 고르기</button>
+    <span class="lab">범위</span>
+    <select id="f-area" title="영역(과목)"></select><select id="f-year" title="학년도"></select><select id="f-unit" title="단원"></select>
+    <select id="f-type" title="문항 유형"></select>
+    <select id="f-flag" title="확인 필요"><option value="">확인 필요 전체</option><option value="답이 갈릴 수 있음">답이 갈릴 수 있음</option><option value="판독·추정">판독·추정</option><option value="책에 없는 내용">책에 없는 내용</option><option value="공식 정답 미확인">공식 정답 미확인</option><option value="low">신뢰도 보통·낮음</option><option value="none">확인 필요 없음</option></select>
+    <span class="lab">순서</span>
+    <select id="f-sort" title="순서"><option value="recent">최근 학년도순</option><option value="unit">단원순</option><option value="points">배점 높은 순</option><option value="random">무작위(섞어 풀기)</option></select>
+    <button class="reset" id="reset" type="button">범위 지우기</button>
+    <select id="f-status" hidden><option value=""></option><option value="todo"></option><option value="again"></option><option value="due"></option><option value="done"></option></select>
   </div>
 </header>
 <div class="wrap">
@@ -135,9 +167,11 @@ body.dark .answer.hide{background:#3b3f6b}body.dark .answer.hide::after{color:#E
 <div id="zoom"><button class="zx" type="button" aria-label="닫기">×</button><div class="zh">눌러서 닫기 · 두 손가락으로 더 확대</div><img alt=""></div>
 <div class="bnav"><button id="b-prev" type="button">‹ 이전</button><button id="b-ans" type="button">정답</button><button id="b-done" type="button">✓ 풀었음</button><button id="b-again" type="button">↻ 다시</button><button id="b-next" type="button">다음 ›</button></div>
 <div id="rec"><div class="box"><h2>내 기록</h2><div id="rec-body"></div>
-<div class="marks"><button id="exp" type="button">기록 내보내기</button><label class="toggle" style="cursor:pointer">기록 가져오기<input type="file" id="imp" accept=".json,application/json" hidden></label><button id="rec-x" type="button">닫기</button></div>
+<div class="marks"><button id="prt" type="button">다시 볼 것·메모 인쇄</button><button id="exp" type="button">기록 내보내기</button><label class="toggle" style="cursor:pointer">기록 가져오기<input type="file" id="imp" accept=".json,application/json" hidden></label><button id="rec-x" type="button">닫기</button></div>
+<p class="cap"><b>오늘 복습</b>: '다시 볼 것'은 하루 뒤, '풀었음'은 3일 → 7일 → 21일 → 60일 뒤에 다시 올라옵니다. 복습 때 또 '풀었음'을 누르면 다음 간격으로 넘어갑니다.</p>
 <p class="cap">표시(풀었음·다시 볼 것)와 메모는 이 기기에만 저장됩니다. 다른 기기로 옮기려면 내보낸 파일을 그 기기에서 가져오세요.</p>
 <p class="cap">단축키(PC): <kbd>←</kbd> <kbd>→</kbd> 이전·다음 · <kbd>Space</kbd> 정답 보기 · <kbd>1</kbd> 풀었음 · <kbd>2</kbd> 다시 볼 것 · <kbd>/</kbd> 검색 · 휴대폰에서는 문항을 좌우로 밀면 이전·다음</p></div></div>
+<div id="print"></div>
 <div id="lock"><form id="lockf"><h2>기출 찾아보기</h2>
 <p>스터디원 전용 자료입니다. 공유받은 비밀번호를 입력하세요.</p>
 <input type="password" id="pw" autocomplete="current-password" placeholder="비밀번호" required>
@@ -156,8 +190,13 @@ const store = {
 let opened = false;      // 이 화면 안에서 목록 → 문항으로 들어왔는가(그래야 뒤로 가기가 목록으로 돌아간다)
 let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null;
 let notes = store.get("imyong-notes", {}), rnd = {};
+// 간격 반복: seen[id] = {t: 표시한 때(ms), s: 단계}. 다시 볼 것 = 0단계(1일 뒤), 풀었음 = 1단계부터(3·7·21·60일 뒤)
+const DAY = 86400000, GAP = [1, 3, 7, 21, 60];
+let seen = store.get("imyong-seen", {});
+Object.keys(marks).forEach(id => { if (!seen[id]) seen[id] = {t: Date.now(), s: marks[id] === "done" ? 1 : 0}; });
+const due = id => marks[id] && seen[id] && Date.now() - seen[id].t >= GAP[Math.min(seen[id].s, GAP.length - 1)] * DAY;
 const shuffle = () => Q.forEach(q => rnd[q.id] = Math.random()); shuffle();
-const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-strength", "f-flag", "f-sort"];
+const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-flag", "f-sort"];
 const KCLS = {"답이 갈릴 수 있음": "split", "책에 없는 내용": "nobook", "공식 정답 미확인": "unoff", "판독·추정": "read"};
 const kinds = (q, only) => q.kinds.filter(k => !only || only.includes(k)).map(k => `<span class="k ${KCLS[k]}">${esc(k)}</span>`).join("");
 const PARTIAL = new Set(DATA.partialAreas || []);
@@ -170,7 +209,6 @@ options($("f-year"), "학년도", uniq(Q.map(q => q.year)).sort((a, b) => b - a)
 $("f-area").innerHTML = `<option value="">영역 전체</option>` + uniq(Q.map(q => q.area)).sort((a, b) => PARTIAL.has(a) - PARTIAL.has(b) || a.localeCompare(b))
   .map(v => `<option value="${esc(v)}">${esc(v)}${PARTIAL.has(v) ? " (쌓는 중)" : ""}</option>`).join("");
 options($("f-type"), "유형", uniq(Q.map(q => q.type)));
-options($("f-strength"), "근거", ["직접", "부분", "배경", "근거 없음"]);
 $("f-unit").innerHTML = `<option value="">단원 전체</option>` + DATA.parts.map(p =>
   `<optgroup label="${esc(p.part)}"><option value="P:${esc(p.part)}">${esc(p.part)} 전체</option>` +
   p.units.map(u => `<option value="U:${esc(u.id)}">${esc(u.chapter)}</option>`).join("") + `</optgroup>`).join("");
@@ -178,10 +216,10 @@ const saved = store.get("imyong-filters", {});
 FIDS.forEach(id => { if (saved[id] != null && [...$(id).options].some(o => o.value === saved[id])) $(id).value = saved[id]; });
 function filtered() {
   const y = $("f-year").value, a = $("f-area").value, u = $("f-unit").value, t = $("f-type").value, st = $("f-status").value,
-        s = $("f-strength").value, fl = $("f-flag").value, words = $("f-q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        fl = $("f-flag").value, words = $("f-q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let out = Q.filter(q => (!y || String(q.year) === y) && (!a || q.area === a) && (!t || q.type === t) &&
-    (!s || q.strength === s) && (!u || (u[0] === "P" ? q.part === u.slice(2) : q.unit === u.slice(2))) &&
-    (!st || (st === "todo" ? !marks[q.id] : marks[q.id] === st)) &&
+    (!u || (u[0] === "P" ? q.part === u.slice(2) : q.unit === u.slice(2))) &&
+    (!st || (st === "todo" ? !marks[q.id] : st === "due" ? due(q.id) : marks[q.id] === st)) &&
     (!fl || (fl === "low" ? q.confidence && q.confidence !== "높음" : fl === "none" ? !q.kinds.length : q.kinds.includes(fl))) &&
     words.every(w => q.hay.includes(w)));
   const sort = $("f-sort").value;
@@ -195,15 +233,17 @@ function render() {
   const rows = filtered(), sort = $("f-sort").value;
   const pts = rows.reduce((n, q) => n + (q.points || 0), 0);
   const done = Q.filter(q => marks[q.id] === "done").length, again = Q.filter(q => marks[q.id] === "again").length;
-  const active = FIDS.filter(id => id !== "f-sort" && $(id).value).length;
-  $("fbtn").textContent = active ? `조건 ${active}` : "조건";
-  $("stat").innerHTML = `<span class="chip dark">${rows.length}문항 · ${pts}점</span>` +
-    `<span class="chip ok">풀었음 ${done}/${Q.length}</span>` + (again ? `<span class="chip warn">다시 볼 것 ${again}</span>` : "") +
-    `<span class="bar" title="풀었음 ${done}/${Q.length}"><i style="width:${Q.length ? 100 * done / Q.length : 0}%"></i></span>` +
-    `<button class="toggle" id="tg">${hideAnswer ? "정답 가리는 중 (눌러서 항상 보기)" : "정답 보이는 중 (눌러서 가리기)"}</button>`;
+  const active = FIDS.filter(id => id !== "f-sort" && id !== "f-status" && $(id).value).length;
+  $("fbtn").textContent = active ? `범위 고르기 (${active})` : "범위 고르기";
+  $("reset").style.visibility = active ? "" : "hidden";
+  const st = $("f-status").value, nDue = Q.filter(q => due(q.id)).length;
+  $("tabs").innerHTML = [["", "전체", Q.length], ["todo", "안 푼 문항", Q.length - done - again], ["again", "다시 볼 것", again], ["due", "오늘 복습", nDue], ["done", "풀었음", done]]
+    .map(([v, t, n]) => `<button type="button" data-v="${v}" class="${st === v ? "on" : ""}${v === "due" && nDue ? " due" : ""}">${t}<b>${n}</b></button>`).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { $("f-status").value = b.dataset.v; changed(); });
+  $("stat").innerHTML = `<span class="cnt">${rows.length}문항 · ${pts}점</span>` +
+    `<span class="bar" title="풀었음 ${done}/${Q.length}"><i style="width:${Q.length ? 100 * done / Q.length : 0}%"></i></span><span>진도 ${Q.length ? Math.round(100 * done / Q.length) : 0}%</span>`;
   const lastId = store.get("imyong-last", null), lq = lastId && Q.find(x => x.id === lastId);
   if (lq && !current) { const b = document.createElement("button"); b.className = "toggle"; b.textContent = "이어 보기: " + lq.title; b.onclick = () => go(lastId); $("stat").appendChild(b); }
-  $("tg").onclick = () => { hideAnswer = !hideAnswer; store.set("imyong-hide", hideAnswer); render(); if (document.body.classList.contains("detail-open") || current) show(current, true); };
   let html = "", last = null;
   rows.forEach(q => {
     const g = sort === "unit" ? q.part + " › " + q.chapter : q.year + "학년도";
@@ -254,7 +294,7 @@ function show(id, keepScroll) {
     `<div class="marks"><button id="m-done" class="done${mk === "done" ? " on" : ""}">✓ 풀었음</button>` +
     `<button id="m-again" class="again${mk === "again" ? " on" : ""}">↻ 다시 볼 것</button></div>` +
     `<div class="sec"><h3>문제</h3><div class="qimg">${q.images.map(i => `<img data-src="${esc(i)}" alt="문제">`).join("") || esc(q.summary)}</div></div>` +
-    `<div class="sec"><h3>정답 (예시)</h3><div class="answer${hideAnswer ? " hide" : ""}" id="ans">${esc(q.answer)}</div></div>` +
+    `<div class="sec"><h3>정답 (예시)<button class="mini" id="tg" type="button">${hideAnswer ? "늘 가림 · 눌러서 늘 보기" : "늘 보임 · 눌러서 가리기"}</button></h3><div class="answer${hideAnswer ? " hide" : ""}" id="ans">${esc(q.answer)}</div></div>` +
     `<div class="sec sol" id="sol" ${hideAnswer ? "hidden" : ""}><h3>문제해결과정</h3>${blocks([q.solution])}` +
       (q.scoring.length ? `<div class="score"><b>채점 요소(추정)</b> ${q.scoring.map(esc).join(" · ")}</div>` : "") +
       (q.note || q.kinds.length ? `<div class="note" style="margin-top:10px"><b>확인 필요</b> ${kinds(q)}${q.note ? "<br>" + esc(q.note) : ""}` +
@@ -269,11 +309,12 @@ function show(id, keepScroll) {
   hydrate($("detail"));
   const ans = $("ans");
   ans.onclick = () => { ans.classList.remove("hide"); $("sol").hidden = false; };
+  $("tg").onclick = () => { hideAnswer = !hideAnswer; store.set("imyong-hide", hideAnswer); show(id, true); };
   $("detail").querySelectorAll("img").forEach(im => im.onclick = () => zoom(im));
   $("back").onclick = () => { if (opened) history.back(); else { history.replaceState(null, "", location.pathname + location.search); route(); } };
   $("prev").onclick = () => at > 0 && go(rows[at - 1].id, true);
   $("next").onclick = () => at < rows.length - 1 && go(rows[at + 1].id, true);
-  const mark = v => { if (marks[id] === v) delete marks[id]; else marks[id] = v; store.set("imyong-marks", marks); render(); show(id, true); };
+  const mark = v => { if (marks[id] === v && !due(id)) { delete marks[id]; delete seen[id]; } else { marks[id] = v; seen[id] = {t: Date.now(), s: v === "done" ? Math.min(((seen[id] || {}).s || 0) + 1, GAP.length - 1) : 0}; } store.set("imyong-marks", marks); store.set("imyong-seen", seen); render(); show(id, true); };
   $("m-done").onclick = () => mark("done");
   $("m-again").onclick = () => mark("again");
   $("memo").oninput = e => { if (e.target.value.trim()) notes[id] = e.target.value; else delete notes[id]; store.set("imyong-notes", notes); };
@@ -291,7 +332,7 @@ FIDS.forEach(id => $(id).onchange = changed);
 $("f-sort").onchange = () => { if ($("f-sort").value === "random") shuffle(); changed(); };
 $("f-q").oninput = () => { render(); if (current && $("ans")) show(current, true); };
 $("fbtn").onclick = () => $("filters").classList.toggle("open");
-$("reset").onclick = () => { FIDS.forEach(id => $(id).selectedIndex = 0); $("f-q").value = ""; changed(); };
+$("reset").onclick = () => { FIDS.filter(id => id !== "f-status" && id !== "f-sort").forEach(id => $(id).selectedIndex = 0); changed(); };
 function openRec() {
   const areas = uniq(Q.map(q => q.area)).sort();
   $("rec-body").innerHTML = `<table><tr><th>영역</th><th>문항</th><th>풀었음</th><th>다시</th><th>진도</th></tr>` + areas.map(a => {
@@ -302,9 +343,24 @@ function openRec() {
 }
 $("more").onclick = openRec; $("rec-x").onclick = () => $("rec").classList.remove("on");
 $("rec").onclick = e => { if (e.target.id === "rec") $("rec").classList.remove("on"); };
-$("exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({marks, notes, saved: new Date().toISOString()})], {type: "application/json"})); a.download = "기출찾아보기_내기록.json"; a.click(); };
-$("imp").onchange = async e => { try { const d = JSON.parse(await e.target.files[0].text()); marks = Object.assign({}, marks, d.marks || {}); notes = Object.assign({}, notes, d.notes || {});
+$("exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({marks, notes, seen, saved: new Date().toISOString()})], {type: "application/json"})); a.download = "기출찾아보기_내기록.json"; a.click(); };
+$("imp").onchange = async e => { try { const d = JSON.parse(await e.target.files[0].text()); marks = Object.assign({}, marks, d.marks || {}); notes = Object.assign({}, notes, d.notes || {}); seen = Object.assign({}, seen, d.seen || {}); store.set("imyong-seen", seen);
   store.set("imyong-marks", marks); store.set("imyong-notes", notes); render(); openRec(); alert("기록을 가져왔습니다."); } catch (err) { alert("파일을 읽지 못했습니다."); } e.target.value = ""; };
+// 오답 노트: '다시 볼 것'으로 표시했거나 메모가 있는 문항만 모아 인쇄한다(문제 그림·정답·풀이·메모)
+$("prt").onclick = async () => {
+  const qs = Q.filter(q => marks[q.id] === "again" || notes[q.id]);
+  if (!qs.length) { alert("'다시 볼 것'으로 표시했거나 메모가 있는 문항이 없습니다."); return; }
+  $("print").innerHTML = `<h1>다시 볼 문항 · 메모 (${qs.length}문항)</h1>` + qs.map(q => `<div class="pq"><h2>${esc(q.title)} · ${esc(q.topic)}</h2>` +
+    q.images.map(i => `<img data-src="${esc(i)}" alt="">`).join("") + `<div class="pa">정답: ${esc(q.answer)}</div>${blocks([q.solution])}` +
+    (notes[q.id] ? `<div class="pm">메모: ${esc(notes[q.id])}</div>` : "") + `</div>`).join("");
+  hydrate($("print"));
+  $("prt").textContent = "그림을 불러오는 중…";
+  const imgs = [...$("print").querySelectorAll("img")];
+  await Promise.race([Promise.all(imgs.map(im => new Promise(r => { const t = setInterval(() => { if (im.complete && im.src) { clearInterval(t); r(); } }, 150); }))), new Promise(r => setTimeout(r, 20000))]);
+  $("prt").textContent = "다시 볼 것·메모 인쇄";
+  document.body.classList.add("printing"); window.print();
+};
+window.addEventListener("afterprint", () => { document.body.classList.remove("printing"); $("print").innerHTML = ""; });
 const setDark = v => { document.body.classList.toggle("dark", v); $("dark").textContent = v ? "밝게" : "어둡게"; store.set("imyong-dark", v); };
 setDark(store.get("imyong-dark", false)); $("dark").onclick = () => setDark(!document.body.classList.contains("dark"));
 document.addEventListener("keydown", e => {

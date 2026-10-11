@@ -2,6 +2,8 @@
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>기출 찾아보기</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
 :root{--navy:#1E2353;--ink:#1B1F3B;--muted:#5B6280;--paper:#F3F5FB;--card:#fff;--line:#D9DEEE;--blue:#5865F2;--pink:#EC48BD;--green:#17B26A;--warn:#FFF2CC}
 *{box-sizing:border-box}
@@ -106,12 +108,6 @@ mark{background:#FFE98A;color:inherit;border-radius:2px}
   .bnav button.on{background:var(--green);border-color:var(--green);color:#fff}.bnav #b-again.on{background:#F59E0B;border-color:#F59E0B}
   body.detail-open .detail{padding-bottom:74px}
 }
-body.dark{--ink:#E8EAF6;--muted:#A5ABC9;--paper:#12142a;--card:#1c1f3d;--line:#363a66;--warn:#4a4012}
-body.dark .chip{background:#2a2e58;color:#dfe3ff}body.dark .chip.ok{background:#17432c;color:#bff0d3}body.dark .chip.warn{background:#4a4012;color:#f3e7b0}
-body.dark .item:hover{background:#23264a}body.dark .item.on{background:#2d3166}body.dark .group,body.dark th{background:#23264a;color:#aab4ff}
-body.dark .nav button,body.dark .marks button,body.dark .toggle,body.dark select,body.dark input[type=search],body.dark .bnav button{background:#23264a;color:#E8EAF6;border-color:#3b3f6b}
-body.dark .note{color:#f3e7b0}body.dark .theory .h,body.dark .sec h3{color:#aab4ff}body.dark .detail img{background:#fff}body.dark .mk{background:#2a2e58}
-body.dark .answer.hide{background:#3b3f6b}body.dark .answer.hide::after{color:#E8EAF6}body.dark .score b{color:#aab4ff}body.dark mark{background:#7a6a12;color:#fff}
 /* ---- 머리 부분: 첫 줄 = 제목·검색·내 기록, 둘째 줄 = 무엇을 풀지(탭), 셋째 줄 = 범위 좁히기 */
 header{display:block;padding:12px 20px 10px}
 .top{display:flex;gap:12px;align-items:center}.brand{white-space:nowrap}
@@ -134,7 +130,6 @@ header{display:block;padding:12px 20px 10px}
 #helpb.on{display:flex}#helpb .box{background:var(--card);color:var(--ink);border-radius:14px;padding:18px 20px;max-width:620px;width:100%;max-height:90vh;overflow:auto}
 #helpb h2{margin:0 0 10px;font-size:18px}#helpb h3{margin:14px 0 6px;font-size:14px;color:var(--blue)}#helpb li{margin:3px 0;font-size:14px;line-height:1.6}#helpb ul{margin:0;padding-left:18px}
 #helpb kbd{border:1px solid var(--line);border-radius:4px;padding:0 6px;font:inherit;font-size:12px;background:var(--paper)}#helpb td{padding:4px 10px 4px 0;font-size:14px;vertical-align:top}
-body.dark #helpb h3{color:#aab4ff}
 .hbtn.q{width:34px;padding:9px 0;font-weight:700;border-radius:50%}
 .bp .mini,.bc .mini{margin:0 4px 0 0}.bc{margin:8px 0}
 .bp{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
@@ -147,7 +142,6 @@ body.dark #helpb h3{color:#aab4ff}
 .filters .adv{display:none}.filters.adv-on .adv{display:inline-block}
 details.fold>summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--blue);padding:4px 0;list-style-position:inside}
 details.fold[open]>summary{margin-bottom:8px}details.fold>summary span{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
-body.dark details.fold>summary{color:#aab4ff}
 @media (max-width:820px){
   header{padding:10px 12px 8px}.top{flex-wrap:wrap;gap:8px}.brand{flex:1}.brand .sub{display:none}
   .top input[type=search]{order:3;flex:1 1 100%;font-size:16px}.hbtn{padding:7px 10px}.bform input,.bform select,.bform textarea{font-size:16px}
@@ -160,7 +154,110 @@ body.dark details.fold>summary{color:#aab4ff}
   #print .pq h2{font-size:12pt;margin:0 0 4pt}#print img{max-width:48%;margin:2pt}#print .pa{font-weight:700;white-space:pre-line;margin:4pt 0}
   #print .pm{border:1px dashed #999;padding:4pt 6pt;margin-top:4pt;white-space:pre-wrap}#print p{margin:2pt 0}
 }
+
+/* ==== 새 화면(2026-10-11): 왼쪽 세로 메뉴 + 위쪽 검색 띠 + 본문(요약 카드 → 문항 표). 밝은 화면은 분홍, 어두운 화면은 남색.
+   색은 아래 토큰으로만 정하고, 어두운 화면은 body.dark 에서 토큰 값만 바꾼다. 위쪽의 옛 규칙은 여기서 덮어쓴다 */
+:root{--bg:#F4F6F5;--card:#FFFFFF;--ink:#1D2433;--muted:#6B7385;--line:#E4E8EC;--hover:#F1F4F7;
+  --accent:#EE4B72;--accent-ink:#FFFFFF;--accent-soft:#FDE8EE;
+  --mint:#CFEEDD;--mint-ink:#17694A;--peach:#FBD9C6;--peach-ink:#9A4A1E;--sky:#CFE3FA;--sky-ink:#1F5596;
+  --warn:#FFF3D2;--warn-ink:#8A5B00;--green:#1E9E6A;--shadow:0 1px 2px rgba(20,30,50,.05),0 8px 24px rgba(20,30,50,.06);
+  --paper:var(--bg);--navy:#1D2433;--blue:var(--accent);--pink:var(--accent)}
+body.dark{--bg:#111830;--card:#1A2342;--ink:#E9EDF8;--muted:#9AA5C4;--line:#2C3760;--hover:#222D52;
+  --accent:#8EA2FF;--accent-ink:#0F1530;--accent-soft:#28346A;
+  --mint:#1F4A3B;--mint-ink:#A9E8CB;--peach:#55372A;--peach-ink:#F6C5A8;--sky:#243A70;--sky-ink:#BBD0FF;
+  --warn:#3F3413;--warn-ink:#F0D58A;--green:#4CCB95;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);
+  --navy:#DDE4FF;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR","맑은 고딕","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{display:grid;grid-template-columns:216px minmax(0,1fr);max-width:1320px;margin:16px auto 8px;background:var(--card);border-radius:20px;box-shadow:var(--shadow);min-height:calc(100vh - 90px)}
+.side{border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:2px 8px 16px;font-weight:700;font-size:15px}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-style:normal}
+.tabs{display:flex;flex-direction:column;gap:2px;margin:0;overflow:visible}
+.tabs button{display:flex;justify-content:space-between;align-items:center;gap:8px;background:none;border:0;border-radius:10px;padding:9px 10px;color:var(--muted);font-size:14px;font-weight:500;text-align:left;white-space:nowrap}
+.tabs button:hover{background:var(--hover);color:var(--ink)}
+.tabs button.on{background:var(--accent-soft);color:var(--accent);border:0;font-weight:700}
+.tabs button b{margin:0;font-size:12px;font-variant-numeric:tabular-nums}
+.tabs button.due:not(.on) b{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 7px}
+.sidecap{font-size:11px;letter-spacing:.08em;color:var(--muted);padding:16px 10px 4px}
+.subj{display:flex;justify-content:space-between;gap:8px;padding:6px 10px;border-radius:8px;border:0;background:none;width:100%;color:var(--muted);font-size:13px;text-align:left}
+.subj:hover{background:var(--hover);color:var(--ink)}.subj.on{color:var(--accent);font-weight:700;background:var(--accent-soft)}
+.subj span{font-variant-numeric:tabular-nums}
+.main{min-width:0}
+header{background:none;color:var(--ink);padding:14px 20px;border-bottom:1px solid var(--line);display:block}
+header .sub{color:var(--muted)}.brand{display:none}
+.top input[type=search]{background:var(--bg);color:var(--ink);border:0;border-radius:12px}
+.hbtn{background:var(--card);color:var(--muted);border:1px solid var(--line)}.hbtn:hover{background:var(--hover);color:var(--ink)}
+.wrap{display:block;padding:20px}
+#home{display:grid;gap:16px;min-width:0}
+body.detail-open #home{display:none}body:not(.detail-open) .detail{display:none}#back{display:inline-block}
+.cards{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch}
+.cards .txt{flex:1 1 230px;min-width:0}.cards h2{margin:0 0 4px;font-size:21px;letter-spacing:-.01em}.cards p{margin:0 0 12px;color:var(--muted);max-width:36ch}
+.cta{background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:9px 16px;font-weight:700}
+.scard{flex:1 1 150px;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;border:0;text-align:left;min-width:0;font:inherit}
+.scard.a{background:var(--mint);color:var(--mint-ink)}.scard.b{background:var(--peach);color:var(--peach-ink)}.scard.c{background:var(--sky);color:var(--sky-ink)}
+.scard .l{font-size:13px;font-weight:500}.scard .v{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.scard .v.sm{font-size:16px;line-height:1.5}.scard .s{font-size:12px;margin-top:8px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.scard .bar{flex:none;max-width:none;width:100%;height:6px;background:rgba(255,255,255,.55);margin-top:10px}.scard .bar i{background:currentColor}
+body.dark .scard .bar{background:rgba(255,255,255,.14)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
+.filters .lab{color:var(--muted);font-size:12px}
+select,input[type=search]{border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.filters select{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.filters select option,.filters select optgroup{color:var(--ink);background:var(--card)}
+.reset{color:var(--muted);border:1px solid var(--line);border-radius:10px}
+.stat{color:var(--muted)}.stat .cnt{color:var(--ink)}
+.list{border:1px solid var(--line);border-radius:14px;max-height:none;overflow:hidden;background:var(--card)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) 150px 100px 92px;gap:12px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}.item:hover{background:var(--hover)}.item.on{background:var(--accent-soft)}
+.item .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item .m{color:var(--muted)}.item .mo{display:none}
+.item .c{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.group{background:var(--bg);color:var(--muted);position:static}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill.done{background:var(--mint);color:var(--mint-ink)}.pill.again{background:var(--peach);color:var(--peach-ink)}.pill.todo{background:var(--bg);color:var(--muted)}
+.detail{border:0;padding:0;background:none;min-height:0}
+.detail .nav{background:var(--card)}.detail h2{font-size:20px;text-wrap:balance}
+.nav button,.marks button,.toggle{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px}
+.marks button.on.done{background:var(--mint);border-color:transparent;color:var(--mint-ink)}.marks button.on.again{background:var(--peach);border-color:transparent;color:var(--peach-ink)}
+.chip{background:var(--bg);color:var(--muted)}.chip.dark{background:var(--sky);color:var(--sky-ink)}.chip.ok{background:var(--mint);color:var(--mint-ink)}.chip.warn{background:var(--warn);color:var(--warn-ink)}
+.sec h3{color:var(--muted);font-size:13px;letter-spacing:.02em}
+.detail>.sec,.detail>details.sec,.qgrid .sec{border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:16px;background:var(--card)}
+.detail>.sec.cap{border:0;padding:0;background:none}
+.qgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:16px}
+.qgrid>div{display:grid;gap:16px;min-width:0}.qgrid .sec{margin-top:0}.qgrid .qimg img{max-width:100%}
+.detail img{background:#fff}
+.answer{background:var(--accent-soft);color:var(--ink);border-radius:14px}
+.answer .ascore{border-top-color:var(--line)}
+.answer.hide{background:var(--bg);color:transparent}.answer.hide::after{color:var(--muted)}
+.theory .h,.score b{color:var(--ink)}
+th{background:var(--bg);color:var(--muted)}
+.note{background:var(--warn);color:var(--warn-ink)}
+.mini{color:var(--muted)}details.fold>summary{color:var(--ink)}
+#rec .bar{background:var(--bg)}#rec .bar i{background:var(--green)}
+.bnav button{background:var(--card);color:var(--ink);border-color:var(--line)}
+.credit{color:var(--muted)}.credit b{color:var(--muted)}
+body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--accent)}
+@media (max-width:1040px){.qgrid{grid-template-columns:minmax(0,1fr)}.item{grid-template-columns:minmax(0,1fr) 92px}.item .c{display:none}.item .mo{display:inline}}
+@media (max-width:820px){
+  .shell{grid-template-columns:minmax(0,1fr);margin:0;border-radius:0;box-shadow:none;min-height:100vh}
+  .side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:5;flex-direction:row;padding:4px 6px calc(4px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);background:var(--card);max-height:none;overflow:visible}
+  .side .logo,.side .sidecap,.side #subjects{display:none}
+  .tabs{flex-direction:row;flex:1;gap:2px}.tabs button{flex:1;flex-direction:column;gap:0;padding:6px 2px;font-size:11px;justify-content:center}
+  body.detail-open .side{display:none}
+  .brand{display:block}header{padding:10px 12px}
+  .wrap{padding:12px 12px 76px}.cards h2{font-size:18px}
+  #fbtn{color:var(--ink);border:1px solid var(--line);border-radius:10px}
+  .detail>.sec,.detail>details.sec,.qgrid .sec{padding:12px;border-radius:12px}
+}
 </style></head><body>
+<div class="shell">
+<aside class="side">
+  <div class="logo"><i>기</i>기출 찾아보기</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="sidecap">과목</div>
+  <div id="subjects"></div>
+</aside>
+<div class="main">
 <header>
   <div class="top">
     <div class="brand"><h1>기출 찾아보기</h1><div class="sub" id="sub"></div></div>
@@ -170,7 +267,10 @@ body.dark details.fold>summary{color:#aab4ff}
     <button class="hbtn" id="dark" type="button">어둡게</button>
     <button class="hbtn q" id="help" type="button" title="도움말 · 단축키 ( ? )" aria-label="도움말">?</button>
   </div>
-  <div class="tabs" id="tabs"></div>
+</header>
+<div class="wrap">
+  <div id="home">
+  <div class="cards" id="cards"></div>
   <div class="filters" id="filters">
     <button id="fbtn" type="button">범위 고르기</button>
     <span class="lab">범위</span>
@@ -183,11 +283,12 @@ body.dark details.fold>summary{color:#aab4ff}
     <button class="reset" id="reset" type="button">범위 지우기</button>
     <select id="f-status" hidden><option value=""></option><option value="todo"></option><option value="again"></option><option value="due"></option><option value="done"></option></select>
   </div>
-</header>
-<div class="wrap">
   <div class="stat" id="stat"></div>
   <div class="list" id="list"></div>
-  <div class="detail" id="detail"><div class="empty">왼쪽에서 문항을 고르세요.</div></div>
+  </div>
+  <div class="detail" id="detail"></div>
+</div>
+</div>
 </div>
 <div class="credit"><b>made by. 가운고 김태하</b>무단 배포 시 공유가 중지될 수 있습니다.</div>
 <div id="zoom"><button class="zx" type="button" aria-label="닫기">×</button><div class="zh">눌러서 닫기 · 두 손가락으로 더 확대</div><img alt=""></div>
@@ -202,8 +303,8 @@ body.dark details.fold>summary{color:#aab4ff}
 <div id="ask-body"></div><div id="dev-box" class="cap" style="margin-top:10px"></div><div class="marks"><button id="ask-x" type="button">닫기</button></div></div></div>
 <div id="helpb"><div class="box"><h2>도움말</h2>
 <h3>문항 찾기</h3><ul>
-<li>위쪽 탭으로 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다.</li>
-<li><b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
+<li>왼쪽 메뉴(휴대폰은 아래 탭)에서 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다. 첫 화면의 카드를 눌러도 됩니다.</li>
+<li>왼쪽 <b>과목</b>이나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
 <li>순서를 <b>무작위</b>로 두면 섞어 풀 수 있습니다.</li></ul>
 <h3>문항 풀기</h3><ul>
 <li>문제를 푼 뒤 <b>정답</b> 칸을 누르면 정답·풀이·채점 요소가 함께 열립니다. 한 번 더 누르면(또는 <kbd>Space</kbd>) 다시 가려집니다.</li>
@@ -400,10 +501,21 @@ function render() {
   $("tabs").innerHTML = [["", "전체", Q.length], ["todo", "안 푼 문항", Q.length - done - again], ["again", "다시 볼 것", again], ["due", "오늘 복습", nDue], ["done", "풀었음", done]]
     .map(([v, t, n]) => `<button type="button" data-v="${v}" class="${st === v ? "on" : ""}${v === "due" && nDue ? " due" : ""}">${t}<b>${n}</b></button>`).join("");
   $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { $("f-status").value = b.dataset.v; changed(); });
-  $("stat").innerHTML = `<span class="cnt">${rows.length}문항 · ${pts}점</span>` +
-    `<span class="bar" title="풀었음 ${done}/${Q.length}"><i style="width:${Q.length ? 100 * done / Q.length : 0}%"></i></span><span>진도 ${Q.length ? Math.round(100 * done / Q.length) : 0}%</span>`;
-  const lastId = store.get("imyong-last", null), lq = lastId && Q.find(x => x.id === lastId);
-  if (lq && !current) { const b = document.createElement("button"); b.className = "toggle"; b.textContent = "이어 보기: " + lq.title; b.onclick = () => go(lastId); $("stat").appendChild(b); }
+  $("stat").innerHTML = `<span class="cnt">${rows.length}문항 · ${pts}점</span>`;
+  const lastId = store.get("imyong-last", null), lq = lastId && Q.find(x => x.id === lastId), pct = Q.length ? Math.round(100 * done / Q.length) : 0;
+  // 요약 카드: 오늘 복습 안내, 진도, 다시 볼 것, 이어 보기. 카드를 누르면 그 목록(또는 그 문항)으로 간다
+  $("cards").innerHTML = `<div class="txt"><h2>${nDue ? `오늘 복습할 문항이 ${nDue}개 있어요` : done + again ? "오늘 복습할 문항은 없어요" : "문항을 풀고 표시해 보세요"}</h2>` +
+    `<p>${nDue ? "지난번에 표시해 둔 문항이 때맞춰 다시 올라왔습니다." : done + again ? "표시해 둔 문항은 때가 되면 여기에 다시 올라옵니다." : "'풀었음', '다시 볼 것'으로 표시하면 복습할 때를 알려 드립니다."}</p>` +
+    (nDue ? `<button class="cta" type="button" data-go="due">오늘 복습 시작</button>` : "") + `</div>` +
+    `<button class="scard a" type="button" data-go="done"><span class="l">풀었음</span><span class="v">${done}</span><span class="bar"><i style="width:${pct}%"></i></span><span class="s">전체 ${Q.length}문항 중 ${pct}%</span></button>` +
+    `<button class="scard b" type="button" data-go="again"><span class="l">다시 볼 것</span><span class="v">${again}</span><span class="s">눌러서 모아 보기</span></button>` +
+    `<button class="scard c" type="button" data-q="${lq ? esc(lastId) : ""}"><span class="l">이어 보기</span><span class="v sm">${lq ? esc(lq.title) : "아직 본 문항이 없어요"}</span><span class="s">${lq ? esc(lq.topic) : "문항을 열면 여기에 남습니다"}</span></button>`;
+  $("cards").querySelectorAll("[data-go]").forEach(b => b.onclick = () => { $("f-status").value = b.dataset.go; changed(); });
+  $("cards").querySelector(".scard.c").onclick = e => { const id = e.currentTarget.dataset.q; if (id) go(id); };
+  const fa = $("f-area").value;
+  $("subjects").innerHTML = uniq(Q.map(q => q.area)).sort((p, q) => Q.filter(x => x.area === q).length - Q.filter(x => x.area === p).length)
+    .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${esc(v)}<span>${Q.filter(x => x.area === v).length}</span></button>`).join("");
+  $("subjects").querySelectorAll(".subj").forEach(b => b.onclick = () => { $("f-area").value = fa === b.dataset.a ? "" : b.dataset.a; changed(); });
   let html = "", last = null;
   const talk = {}; (posts || []).forEach(p => talk[p.qid] = (talk[p.qid] || 0) + 1);
   rows.forEach(q => {
@@ -411,10 +523,11 @@ function render() {
     if (g !== last && sort !== "points" && sort !== "random") { html += `<div class="group">${esc(g)}</div>`; last = g; }
     const mk = marks[q.id];
     html += `<div class="item${current === q.id ? " on" : ""}" data-id="${esc(q.id)}">` +
-      `<span class="mk ${mk || ""}" title="${mk === "done" ? "풀었음" : mk === "again" ? "다시 볼 것" : ""}">${mk === "done" ? "✓" : mk === "again" ? "↻" : "·"}</span>` +
       `<div class="b"><div class="t">${esc(q.topic)}${notes[q.id] ? " ✎" : ""}${talk[q.id] ? " 💬" + talk[q.id] : ""}</div>` +
-      `<div class="m">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · ${esc(sort === "unit" ? q.area : q.chapter)}</div>` +
-      (q.kinds.includes("답이 갈릴 수 있음") ? `<div class="m">${kinds(q, ["답이 갈릴 수 있음"])}</div>` : "") + `</div></div>`;
+      `<div class="m"><span class="mo">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · </span>${esc(sort === "unit" ? q.area : q.chapter)}` +
+      (q.kinds.includes("답이 갈릴 수 있음") ? " " + kinds(q, ["답이 갈릴 수 있음"]) : "") + `</div></div>` +
+      `<span class="c">${esc(q.title)}</span><span class="c">${esc(q.type)} · ${q.points}점</span>` +
+      `<span><span class="pill ${mk || "todo"}">${mk === "done" ? "풀었음" : mk === "again" ? "다시 볼 것" : "안 풂"}</span></span></div>`;
   });
   $("list").innerHTML = html || `<div class="empty">조건에 맞는 문항이 없습니다.</div>`;
   $("list").querySelectorAll(".item").forEach(el => el.onclick = () => go(el.dataset.id));
@@ -454,11 +567,11 @@ function show(id, keepScroll) {
     `<h2>${esc(q.topic)}</h2>` +
     `<div class="marks"><button id="m-done" class="done${mk === "done" ? " on" : ""}">✓ 풀었음</button>` +
     `<button id="m-again" class="again${mk === "again" ? " on" : ""}">↻ 다시 볼 것</button></div>` +
-    `<div class="sec"><h3>문제</h3><div class="qimg">${q.images.map(i => `<img data-src="${esc(i)}" alt="문제">`).join("") || esc(q.summary)}</div></div>` +
+    `<div class="qgrid"><div><div class="sec"><h3>문제</h3><div class="qimg">${q.images.map(i => `<img data-src="${esc(i)}" alt="문제">`).join("") || esc(q.summary)}</div></div></div><div>` +
     `<div class="sec"><h3>정답 (예시)<button class="mini" id="tg" type="button">${hideAnswer ? "늘 가림 · 눌러서 늘 보기" : "늘 보임 · 눌러서 가리기"}</button></h3><div class="answer${hideAnswer ? " hide" : ""}" id="ans">${esc(q.answer.replace(/^○ /gm, "• "))}${q.scoring.length ? `<div class="ascore">채점 요소(추정) · ${q.scoring.map(esc).join(" · ")}</div>` : ""}</div></div>` +
     `<div class="sec sol" id="sol" ${hideAnswer ? "hidden" : ""}><h3>문제해결과정</h3>${blocks([q.solution])}` +
       (q.note || q.kinds.length ? `<div class="note" style="margin-top:10px"><b>확인 필요</b> ${kinds(q)}${q.note ? "<br>" + esc(q.note) : ""}` +
-        (q.supplement.length ? `<br>책에 없는 내용: ${q.supplement.map(x => esc(x.term)).join(", ")} (아래 표)` : "") + `</div>` : "") + `</div>` +
+        (q.supplement.length ? `<br>책에 없는 내용: ${q.supplement.map(x => esc(x.term)).join(", ")} (아래 표)` : "") + `</div>` : "") + `</div></div></div>` +
     `<div class="sec theory"><h3>관련 이론정리</h3>${blocks(q.theory)}</div>` +
     `<details class="sec fold" data-k="refs"><summary>관련 참고 문헌 · 교재 원문<span>${q.refs.length}곳 · 눌러서 펼치기</span></summary><table class="refs"><tr><th>책</th><th>쪽</th><th>근거</th><th>그 쪽의 내용</th></tr>` +
       q.refs.map(r => `<tr><td>${esc(r.book)}</td><td>p.${esc(r.pages)}</td><td>${esc(r.strength)}</td><td>${esc(r.evidence)}${r.passages.length ? `<div class="psg"><div class="cap">교재 원문 (빨간 밑줄이 근거 문장)</div>${r.passages.map(p => `<img data-src="${esc(p)}" alt="교재 원문">`).join("")}</div>` : ""}</td></tr>`).join("") + `</table></details>` +

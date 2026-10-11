@@ -130,6 +130,13 @@ header{display:block;padding:12px 20px 10px}
 #askb{position:fixed;inset:0;z-index:15;background:rgba(15,18,45,.6);display:none;align-items:center;justify-content:center;padding:14px}
 #askb.on{display:flex}#askb .box{background:var(--card);color:var(--ink);border-radius:14px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
 #askb h2{margin:0 0 10px;font-size:18px}
+#helpb{position:fixed;inset:0;z-index:15;background:rgba(15,18,45,.6);display:none;align-items:center;justify-content:center;padding:14px}
+#helpb.on{display:flex}#helpb .box{background:var(--card);color:var(--ink);border-radius:14px;padding:18px 20px;max-width:620px;width:100%;max-height:90vh;overflow:auto}
+#helpb h2{margin:0 0 10px;font-size:18px}#helpb h3{margin:14px 0 6px;font-size:14px;color:var(--blue)}#helpb li{margin:3px 0;font-size:14px;line-height:1.6}#helpb ul{margin:0;padding-left:18px}
+#helpb kbd{border:1px solid var(--line);border-radius:4px;padding:0 6px;font:inherit;font-size:12px;background:var(--paper)}#helpb td{padding:4px 10px 4px 0;font-size:14px;vertical-align:top}
+body.dark #helpb h3{color:#aab4ff}
+.hbtn.q{width:34px;padding:9px 0;font-weight:700;border-radius:50%}
+.bp .mini,.bc .mini{margin:0 4px 0 0}.bc{margin:8px 0}
 .bp{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
 .bh{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}.bh b{color:var(--ink);font-size:13px}
 .bt{white-space:pre-wrap;word-break:break-word;margin:6px 0;font-size:14px;line-height:1.6}
@@ -161,6 +168,7 @@ body.dark details.fold>summary{color:#aab4ff}
     <button class="hbtn" id="ask" type="button" title="개발자에게 문의" hidden>문의</button>
     <button class="hbtn" id="more" type="button">내 기록</button>
     <button class="hbtn" id="dark" type="button">어둡게</button>
+    <button class="hbtn q" id="help" type="button" title="도움말 · 단축키 ( ? )" aria-label="도움말">?</button>
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters">
@@ -188,10 +196,34 @@ body.dark details.fold>summary{color:#aab4ff}
 <div class="marks"><button id="prt" type="button">다시 볼 것·메모 인쇄</button><button id="exp" type="button">기록 내보내기</button><label class="toggle" style="cursor:pointer">기록 가져오기<input type="file" id="imp" accept=".json,application/json" hidden></label><button id="rec-x" type="button">닫기</button></div>
 <p class="cap"><b>오늘 복습</b>: '다시 볼 것'은 하루 뒤, '풀었음'은 3일 → 7일 → 21일 → 60일 뒤에 다시 올라옵니다. 복습 때 또 '풀었음'을 누르면 다음 간격으로 넘어갑니다.</p>
 <p class="cap">표시(풀었음·다시 볼 것)와 메모는 이 기기에만 저장됩니다. 다른 기기로 옮기려면 내보낸 파일을 그 기기에서 가져오세요.</p>
-<p class="cap">단축키(PC): <kbd>←</kbd> <kbd>→</kbd> 이전·다음 · <kbd>Space</kbd> 정답 보기 · <kbd>1</kbd> 풀었음 · <kbd>2</kbd> 다시 볼 것 · <kbd>/</kbd> 검색 · 휴대폰에서는 문항을 좌우로 밀면 이전·다음</p></div></div>
+<p class="cap">사용 방법과 단축키는 위쪽 <b>?</b> 단추(도움말)에 있습니다.</p></div></div>
 <div id="askb"><div class="box"><h2>개발자에게 문의</h2>
 <p class="cap">쓰다가 불편한 점, 고쳤으면 하는 점, 자료의 오류를 알려 주세요. 문항에 대한 질문은 그 문항 화면 아래 '질문·의견'에 남기면 됩니다.</p>
-<div id="ask-body"></div><div class="marks"><button id="ask-x" type="button">닫기</button></div></div></div>
+<div id="ask-body"></div><div id="dev-box" class="cap" style="margin-top:10px"></div><div class="marks"><button id="ask-x" type="button">닫기</button></div></div></div>
+<div id="helpb"><div class="box"><h2>도움말</h2>
+<h3>문항 찾기</h3><ul>
+<li>위쪽 탭으로 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다.</li>
+<li><b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
+<li>순서를 <b>무작위</b>로 두면 섞어 풀 수 있습니다.</li></ul>
+<h3>문항 풀기</h3><ul>
+<li>문제를 푼 뒤 <b>정답</b> 칸을 누르면 정답·풀이·채점 요소가 함께 열립니다. 한 번 더 누르면(또는 <kbd>Space</kbd>) 다시 가려집니다.</li>
+<li><b>✓ 풀었음</b>, <b>↻ 다시 볼 것</b>으로 표시해 두면 '오늘 복습'에 때맞춰 다시 올라옵니다(다시 볼 것 1일 뒤, 풀었음 3 → 7 → 21 → 60일 뒤).</li>
+<li>그림을 누르면 크게 보입니다. <b>내 메모</b>는 이 기기에만 저장됩니다.</li>
+<li>'확인 필요'가 붙은 문항은 답이 갈릴 수 있거나 공식 정답을 확인하지 못한 문항입니다. 예시 답안은 공식 정답이 아닙니다.</li></ul>
+<h3>질문·의견과 문의</h3><ul>
+<li>문항 아래 <b>질문·의견</b>에 질문, 의견, 오류 제보를 남기면 스터디원 모두가 봅니다. 내가 쓴 글은 <b>수정</b>할 수 있습니다(쓴 기기에서).</li>
+<li>앱에 대한 요청은 위쪽 <b>문의</b> 단추로 보내 주세요.</li></ul>
+<h3>내 기록</h3><ul>
+<li><b>내 기록</b>에서 영역별 진도를 보고, 다시 볼 것·메모만 모아 인쇄하거나, 기록을 파일로 내보내 다른 기기로 옮길 수 있습니다.</li></ul>
+<h3>단축키 (PC)</h3><table>
+<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>이전 · 다음 문항</td></tr>
+<tr><td><kbd>Space</kbd></td><td>정답 보기 · 다시 가리기</td></tr>
+<tr><td><kbd>1</kbd> · <kbd>2</kbd></td><td>풀었음 · 다시 볼 것</td></tr>
+<tr><td><kbd>/</kbd></td><td>검색 칸으로</td></tr>
+<tr><td><kbd>?</kbd></td><td>이 도움말</td></tr>
+<tr><td><kbd>Esc</kbd></td><td>창 닫기</td></tr></table>
+<p class="cap">휴대폰에서는 문항을 좌우로 밀면 이전·다음으로 넘어가고, 아래쪽 단추로 정답·표시를 누릅니다.</p>
+<div class="marks"><button id="help-x" type="button">닫기</button></div></div></div>
 <div id="print"></div>
 <div id="lock"><form id="lockf"><h2>기출 찾아보기</h2>
 <p>스터디원 전용 자료입니다. 공유받은 비밀번호를 입력하세요.</p>
@@ -208,6 +240,7 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
 };
+let flip = () => false;  // 지금 열린 문항의 정답을 열고 닫는 함수(show 가 바꿔 넣는다)
 let opened = false;      // 이 화면 안에서 목록 → 문항으로 들어왔는가(그래야 뒤로 가기가 목록으로 돌아간다)
 let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null;
 let notes = store.get("imyong-notes", {}), rnd = {};
@@ -226,12 +259,24 @@ document.getElementById("sub").textContent = DATA.title + " · " + Q.length + "�
 // 열쇠(토큰)는 암호화된 자료 안에 들어 있어 비밀번호를 푼 사람만 읽고 쓸 수 있다. 로그인은 없고 닉네임만 적는다.
 const BOARD = DATA.board || null, KINDS = ["질문", "의견", "오류 제보"];
 let posts = null, postsAt = 0, postsP = null;
-async function gh(path, body) {
-  const r = await fetch("https://api.github.com/repos/" + BOARD.repo + path, {method: body ? "POST" : "GET", cache: "no-store",
+async function gh(path, body, method) {
+  const r = await fetch("https://api.github.com/repos/" + BOARD.repo + path, {method: method || (body ? "POST" : "GET"), cache: "no-store",
     headers: Object.assign({Authorization: "Bearer " + BOARD.token, Accept: "application/vnd.github+json"}, body ? {"Content-Type": "application/json"} : {}),
     body: body ? JSON.stringify(body) : undefined});
   if (!r.ok) throw new Error(r.status === 401 ? "게시판 열쇠가 만료되었습니다. 개발자에게 알려 주세요." : "게시판에 연결하지 못했습니다 (" + r.status + ")");
-  return r.json();
+  return r.status === 204 ? null : r.json();
+}
+// 수정: 이 기기에서 쓴 글(mine)만. 개발자 모드(dev)에서는 모든 글을 고치고 지울 수 있다. 화면에서만 막는 것이라 보안 장치는 아니다
+const mine = store.get("imyong-mine", {p: [], c: []});
+let dev = !!(BOARD && BOARD.dev && store.get("imyong-dev", "") === BOARD.dev);
+const acts = can => (can ? `<button class="mini ed" type="button">수정</button>` : "") + (dev ? `<button class="mini rm" type="button">삭제</button>` : "");
+function editor(bt, text, save) {
+  const old = bt.textContent;
+  bt.innerHTML = `<div class="bform"><textarea class="bx" maxlength="2000"></textarea><div class="row"><button class="toggle sv" type="button">저장</button><button class="toggle cc" type="button">취소</button></div></div>`;
+  const ta = bt.querySelector("textarea"); ta.value = text; ta.focus();
+  bt.querySelector(".cc").onclick = () => { bt.textContent = old; };
+  bt.querySelector(".sv").onclick = async e => { const v = ta.value.trim(); if (!v) return; e.target.disabled = true;
+    try { await save(v); } catch (err) { alert(err.message); e.target.disabled = false; } };
 }
 const pack = (nick, text) => "**닉네임**: " + (nick || "익명") + "\n\n" + text;
 // 앱에서 쓴 글은 첫 줄에 닉네임이 있다. 그 줄이 없는 글은 깃허브 화면에서 직접 쓴 것(개발자)이다
@@ -244,7 +289,7 @@ function loadPosts(force) {
   if (postsP) return postsP;
   postsP = (async () => { const all = [];
     for (let p = 1; p <= 10; p++) { const a = await gh("/issues?state=all&per_page=100&page=" + p); all.push(...a.filter(x => !x.pull_request)); if (a.length < 100) break; }
-    posts = all.map(toPost); postsAt = Date.now(); return posts; })().finally(() => { postsP = null; });
+    posts = all.map(toPost).filter(p => p.qid !== "삭제됨"); postsAt = Date.now(); return posts; })().finally(() => { postsP = null; });
   return postsP;
 }
 const when = t => { const d = new Date(t); return isNaN(d) ? "" : d.toLocaleDateString("ko-KR", {year: "2-digit", month: "numeric", day: "numeric"}); };
@@ -254,36 +299,60 @@ async function drawBoard(root, qid, kinds, hint) {
   let list;
   try { list = (await loadPosts()).filter(p => p.qid === qid).sort((a, b) => a.n - b.n); }
   catch (e) { root.innerHTML = `<p class="cap">${esc(e.message)}</p>`; return; }
+  const redraw = () => drawBoard(root, qid, kinds, hint);
   root.innerHTML = (list.map(p => `<div class="bp" data-n="${p.n}"><div class="bh"><span class="chip${p.closed ? " ok" : ""}">${esc(p.kind || "글")}${p.closed ? " · 해결됨" : ""}</span><b>${esc(p.nick)}</b><span>${when(p.at)}</span></div>` +
-      `<div class="bt">${esc(p.text)}</div><button class="mini rp" type="button">${p.replies ? "답글 " + p.replies + "개 보기" : "답글 달기"}</button><div class="br" hidden></div></div>`).join("") ||
+      `<div class="bt">${esc(p.text)}</div><button class="mini rp" type="button">${p.replies ? "답글 " + p.replies + "개 보기" : "답글 달기"}</button>` +
+      acts(dev || mine.p.includes(p.n)) + (dev ? `<button class="mini cl" type="button">${p.closed ? "해결됨 해제" : "해결됨 표시"}</button>` : "") + `<div class="br" hidden></div></div>`).join("") ||
       `<p class="cap">아직 글이 없습니다.</p>`) +
     `<div class="bform"><div class="row">${kinds.length > 1 ? `<select class="bk">${kinds.map(k => `<option>${k}</option>`).join("")}</select>` : ""}` +
-    `<input class="bn" maxlength="20" placeholder="닉네임" value="${esc(store.get("imyong-nick", ""))}"></div>` +
+    `<input class="bn" maxlength="20" placeholder="닉네임" value="${esc(dev ? "개발자" : store.get("imyong-nick", ""))}"></div>` +
     `<textarea class="bx" maxlength="2000" placeholder="${esc(hint)}"></textarea>` +
     `<div class="row"><button class="toggle bs" type="button">올리기</button><span class="cap">글은 스터디원 모두에게 보입니다.</span></div></div>`;
-  const nick = () => { const v = root.querySelector(".bn").value.trim().replace(/·/g, " "); store.set("imyong-nick", v); return v; };
+  const nick = () => { const v = root.querySelector(".bn").value.trim().replace(/·/g, " "); if (!dev) store.set("imyong-nick", v); return v; };
   const form = root.lastElementChild, btn = form.querySelector(".bs");
   btn.onclick = async () => {
     const text = form.querySelector(".bx").value.trim(); if (!text) return;
     const kind = kinds.length > 1 ? form.querySelector(".bk").value : kinds[0], who = nick();
     btn.disabled = true; btn.textContent = "올리는 중…";
-    try { posts.push(toPost(await gh("/issues", {title: `[${qid}] ${kind} · ${who || "익명"}`, body: pack(who, text)}))); await drawBoard(root, qid, kinds, hint); render(); count(); }
+    try { const p = toPost(await gh("/issues", {title: `[${qid}] ${kind} · ${who || "익명"}`, body: pack(who, text)}));
+      posts.push(p); mine.p.push(p.n); store.set("imyong-mine", mine); await redraw(); render(); count(); }
     catch (e) { alert(e.message); btn.disabled = false; btn.textContent = "올리기"; }
   };
   root.querySelectorAll(".bp").forEach(el => {
-    const p = list.find(x => x.n === +el.dataset.n), box = el.querySelector(".br"), rp = el.querySelector(".rp");
+    const p = list.find(x => x.n === +el.dataset.n), box = el.querySelector(".br"), rp = el.querySelector(".rp"), q1 = c => el.querySelector(":scope > " + c);
+    const label = () => { rp.textContent = p.replies ? "답글 " + p.replies + "개 보기" : "답글 달기"; };
+    if (q1(".ed")) q1(".ed").onclick = () => editor(q1(".bt"), p.text, async v => { await gh(`/issues/${p.n}`, {body: pack(p.nick, v)}, "PATCH"); p.text = v; redraw(); });
+    if (q1(".rm")) q1(".rm").onclick = async () => { if (!confirm("이 글을 지울까요? 달린 답글도 함께 보이지 않게 됩니다.")) return;
+      try { await gh(`/issues/${p.n}`, {title: "[삭제됨] " + p.n, body: "", state: "closed"}, "PATCH"); posts = posts.filter(x => x !== p); await redraw(); render(); count(); } catch (e) { alert(e.message); } };
+    if (q1(".cl")) q1(".cl").onclick = async () => { try { await gh(`/issues/${p.n}`, {state: p.closed ? "open" : "closed"}, "PATCH"); p.closed = !p.closed; redraw(); } catch (e) { alert(e.message); } };
     const open = async () => {
       box.hidden = false; box.innerHTML = `<p class="cap">불러오는 중…</p>`;
       let cs = []; try { if (p.replies) cs = await gh(`/issues/${p.n}/comments?per_page=100`); } catch (e) { box.innerHTML = `<p class="cap">${esc(e.message)}</p>`; return; }
-      box.innerHTML = cs.map(c => { const b = unpack(c.body); return said(b.nick, c.created_at, b.text); }).join("") +
+      box.innerHTML = cs.map(c => { const b = unpack(c.body); return `<div class="bc" data-id="${c.id}"><div class="bh"><b>${esc(b.nick)}</b><span>${when(c.created_at)}</span></div><div class="bt">${esc(b.text)}</div>${acts(dev || mine.c.includes(c.id))}</div>`; }).join("") +
         `<div class="bform"><textarea class="bx" maxlength="2000" placeholder="답글 (닉네임은 아래 칸에 적은 것을 씁니다)"></textarea><div class="row"><button class="toggle bs" type="button">답글 올리기</button></div></div>`;
-      const b2 = box.querySelector(".bs");
-      b2.onclick = async () => { const text = box.querySelector(".bx").value.trim(); if (!text) return; b2.disabled = true;
-        try { await gh(`/issues/${p.n}/comments`, {body: pack(nick(), text)}); p.replies++; rp.textContent = "답글 " + p.replies + "개 보기"; open(); }
+      box.querySelectorAll(".bc").forEach(ce => { const c = cs.find(x => x.id === +ce.dataset.id), b = unpack(c.body);
+        if (ce.querySelector(".ed")) ce.querySelector(".ed").onclick = () => editor(ce.querySelector(".bt"), b.text, async v => { await gh(`/issues/comments/${c.id}`, {body: pack(b.nick, v)}, "PATCH"); open(); });
+        if (ce.querySelector(".rm")) ce.querySelector(".rm").onclick = async () => { if (!confirm("이 답글을 지울까요?")) return;
+          try { await gh(`/issues/comments/${c.id}`, null, "DELETE"); p.replies = Math.max(0, p.replies - 1); label(); open(); } catch (e) { alert(e.message); } }; });
+      const b2 = box.querySelector(":scope > .bform .bs");
+      b2.onclick = async () => { const text = box.querySelector(":scope > .bform .bx").value.trim(); if (!text) return; b2.disabled = true;
+        try { const c = await gh(`/issues/${p.n}/comments`, {body: pack(nick(), text)}); mine.c.push(c.id); store.set("imyong-mine", mine); p.replies++; label(); open(); }
         catch (e) { alert(e.message); b2.disabled = false; } };
     };
     rp.onclick = () => { if (box.hidden) open(); else box.hidden = true; };
   });
+}
+// 개발자 모드: 문의 창 아래에서 개발자 비밀번호를 넣으면 이 기기에서 모든 글의 수정·삭제·해결됨 표시 단추가 나온다
+function drawDev() {
+  const box = $("dev-box"); if (!BOARD || !BOARD.dev) { box.innerHTML = ""; return; }
+  const again = () => { drawDev(); drawBoard($("ask-body"), "문의", ["문의"], "문의할 내용을 적어 주세요."); if (current && $("bd") && $("bd").open) drawBoard($("bd-body"), current, KINDS, "이 문항에 대한 질문이나 의견, 풀이의 오류를 적어 주세요."); };
+  if (dev) { box.innerHTML = `개발자 모드입니다. 모든 글을 고치고 지울 수 있습니다. <button class="mini" id="dev-off" type="button">끄기</button>`;
+    $("dev-off").onclick = () => { dev = false; store.set("imyong-dev", ""); again(); }; return; }
+  box.innerHTML = `<details><summary>개발자 로그인</summary><div class="bform"><div class="row"><input type="password" id="dev-pw" placeholder="개발자 비밀번호" autocomplete="off"><button class="toggle" id="dev-go" type="button">확인</button></div></div></details>`;
+  $("dev-go").onclick = async () => {
+    const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("imyong-dev|" + $("dev-pw").value)))].map(x => x.toString(16).padStart(2, "0")).join("");
+    if (h === BOARD.dev) { dev = true; store.set("imyong-dev", h); again(); } else { $("dev-pw").value = ""; $("dev-pw").placeholder = "비밀번호가 맞지 않습니다"; }
+  };
 }
 // 지금 열린 문항의 '질문·의견' 머리글에 글 수를 적는다
 function count() {
@@ -407,7 +476,9 @@ function show(id, keepScroll) {
     loadPosts().then(count).catch(() => {});
   }
   const ans = $("ans");
-  ans.onclick = () => { ans.classList.remove("hide"); $("sol").hidden = false; };
+  // 정답 칸을 누르거나 Space 를 누르면 열리고, 한 번 더 누르면 다시 가려진다
+  flip = () => { const open = ans.classList.contains("hide"); ans.classList.toggle("hide", !open); $("sol").hidden = !open; return open; };
+  ans.onclick = flip;
   $("tg").onclick = () => { hideAnswer = !hideAnswer; store.set("imyong-hide", hideAnswer); show(id, true); };
   $("detail").querySelectorAll("img").forEach(im => im.onclick = () => zoom(im));
   $("back").onclick = () => { if (opened) history.back(); else { history.replaceState(null, "", location.pathname + location.search); route(); } };
@@ -419,7 +490,7 @@ function show(id, keepScroll) {
   $("memo").oninput = e => { if (e.target.value.trim()) notes[id] = e.target.value; else delete notes[id]; store.set("imyong-notes", notes); };
   store.set("imyong-last", id);
   $("b-prev").onclick = () => $("prev").click(); $("b-next").onclick = () => $("next").click();
-  $("b-ans").onclick = () => { ans.click(); $("sol").scrollIntoView({behavior: "smooth", block: "start"}); };
+  $("b-ans").onclick = () => { if (flip()) $("sol").scrollIntoView({behavior: "smooth", block: "start"}); };
   $("b-done").onclick = () => mark("done"); $("b-again").onclick = () => mark("again");
   $("b-done").classList.toggle("on", mk === "done"); $("b-again").classList.toggle("on", mk === "again");
   markWords($("detail"), $("f-q").value.trim().split(/\s+/).filter(w => w.length > 1));
@@ -443,9 +514,11 @@ function openRec() {
 }
 $("more").onclick = openRec; $("rec-x").onclick = () => $("rec").classList.remove("on");
 $("rec").onclick = e => { if (e.target.id === "rec") $("rec").classList.remove("on"); };
+$("help").onclick = () => $("helpb").classList.add("on"); $("help-x").onclick = () => $("helpb").classList.remove("on");
+$("helpb").onclick = e => { if (e.target.id === "helpb") $("helpb").classList.remove("on"); };
 if (BOARD) {
   $("ask").hidden = false;
-  $("ask").onclick = () => { $("askb").classList.add("on"); drawBoard($("ask-body"), "문의", ["문의"], "문의할 내용을 적어 주세요."); };
+  $("ask").onclick = () => { $("askb").classList.add("on"); drawBoard($("ask-body"), "문의", ["문의"], "문의할 내용을 적어 주세요."); drawDev(); };
   $("ask-x").onclick = () => $("askb").classList.remove("on");
   $("askb").onclick = e => { if (e.target.id === "askb") $("askb").classList.remove("on"); };
   loadPosts().then(() => { render(); count(); }).catch(() => {});
@@ -472,12 +545,13 @@ const setDark = v => { document.body.classList.toggle("dark", v); $("dark").text
 setDark(store.get("imyong-dark", false)); $("dark").onclick = () => setDark(!document.body.classList.contains("dark"));
 document.addEventListener("keydown", e => {
   const z = document.getElementById("zoom");
-  if (e.key === "Escape") { if (z.classList.contains("on")) z.click(); else if ($("rec").classList.contains("on")) $("rec").classList.remove("on"); else if ($("askb").classList.contains("on")) $("askb").classList.remove("on"); else if (e.target.blur && /INPUT|TEXTAREA/.test(e.target.tagName)) e.target.blur(); return; }
+  if (e.key === "Escape") { if (z.classList.contains("on")) z.click(); else if ($("rec").classList.contains("on")) $("rec").classList.remove("on"); else if ($("askb").classList.contains("on")) $("askb").classList.remove("on"); else if ($("helpb").classList.contains("on")) $("helpb").classList.remove("on"); else if (e.target.blur && /INPUT|TEXTAREA/.test(e.target.tagName)) e.target.blur(); return; }
   if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === "/") { e.preventDefault(); $("f-q").focus(); return; }
+  if (e.key === "?") { $("helpb").classList.toggle("on"); return; }
   if (!current || !$("ans")) return;
   if (e.key === "ArrowLeft") $("prev").click(); else if (e.key === "ArrowRight") $("next").click();
-  else if (e.key === " " || e.key === "Enter") { e.preventDefault(); $("ans").click(); }
+  else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
   else if (e.key === "1") $("m-done").click(); else if (e.key === "2") $("m-again").click();
 });
 let tx = 0, ty = 0;

@@ -298,6 +298,21 @@ header .top{justify-content:flex-end;gap:8px}
   header h1{font-size:15px;margin:0}.brand .sub{font-size:11px}.hbtn{padding:6px 7px;font-size:12px}.hbtn.q{width:28px;padding:6px 0}
   .top .sbox{order:3;flex:1 1 100%}.sbox input[type=search]{font-size:16px}.sbox kbd{display:none}.hbtn .ic{display:none}
 }
+
+/* 2026-10-11: PC 는 화면을 가득 쓴다. 도움말은 짧게(아이콘 + 굵은 낱말 + 한 줄) */
+@media (min-width:821px){.shell{max-width:none;margin:0;border-radius:0;box-shadow:none;min-height:100vh}.wrap{padding:20px 28px}.side{min-height:100vh}
+  .detail .theory>p,.detail .sol>p{max-width:100ch}}
+.hbtn[hidden]{display:none}
+.hbtn.q{width:36px;height:36px;padding:0;justify-content:center;line-height:1;font-size:15px}
+.yr.all{font-weight:600}
+#helpb .box{max-width:520px;padding:20px 22px}
+.hrow{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.hrow .hi{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.hrow b{display:block;font-size:15px}.hrow span.d{display:block;font-size:13px;color:var(--muted);line-height:1.45}
+.keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;margin-top:12px}
+.keys span{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink)}
+#helpb .keys kbd{min-width:24px;text-align:center;font-weight:700;padding:1px 6px;border-radius:6px}
+@media (max-width:820px){.hbtn.q{width:28px;height:28px;padding:0}.keys{display:none}}
 </style></head><body>
 <div class="shell">
 <aside class="side">
@@ -312,6 +327,7 @@ header .top{justify-content:flex-end;gap:8px}
   <div class="top">
     <div class="brand"><h1>생물 임용 기출 찾아보기</h1><div class="sub" id="sub"></div></div>
     <div id="scope"></div>
+    <button class="hbtn" id="clr" type="button" title="과목·학년도·검색을 모두 풀기" hidden></button>
     <button class="hbtn" id="ask" type="button" title="개발자에게 문의" hidden>문의</button>
     <button class="hbtn" id="more" type="button">내 기록</button>
     <button class="hbtn" id="dark" type="button">어둡게</button>
@@ -352,31 +368,17 @@ header .top{justify-content:flex-end;gap:8px}
 <p class="cap">쓰다가 불편한 점, 고쳤으면 하는 점, 자료의 오류를 알려 주세요. 문항에 대한 질문은 그 문항 화면 아래 '질문·의견'에 남기면 됩니다.</p>
 <div id="ask-body"></div><div id="dev-box" class="cap" style="margin-top:10px"></div><div class="marks"><button id="ask-x" type="button">닫기</button></div></div></div>
 <div id="helpb"><div class="box"><h2>도움말</h2>
-<h3>문항 찾기</h3><ul>
-<li>왼쪽 메뉴의 <b>과목</b>·<b>학년도</b>·<b>학습 도우미</b>는 머리를 눌러 접고 폅니다. 접어 두어도 고른 것은 머리 오른쪽에 표시됩니다.</li>
-<li><b>학습 도우미</b>(휴대폰은 아래 탭)에서 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다. 첫 화면의 카드를 눌러도 됩니다.</li>
-<li>왼쪽 <b>과목</b>·<b>학년도</b>(둘을 함께 고를 수 있고, 다시 누르면 풀립니다)나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 왼쪽 위 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
-<li>순서를 <b>무작위</b>로 두면 섞어 풀 수 있습니다.</li></ul>
-<h3>문항 풀기</h3><ul>
-<li>문제를 푼 뒤 <b>정답</b> 칸을 누르면 정답·풀이·채점 요소가 함께 열립니다. 한 번 더 누르면(또는 <kbd>Space</kbd>) 다시 가려집니다.</li>
-<li><b>✓ 풀었음</b>, <b>↻ 다시 볼 것</b>으로 표시해 두면 '오늘 복습'에 때맞춰 다시 올라옵니다(다시 볼 것 1일 뒤, 풀었음 3 → 7 → 21 → 60일 뒤).</li>
-<li>그림을 누르면 크게 보입니다. <b>내 메모</b>는 이 기기에만 저장됩니다.</li>
-<li>'확인 필요'가 붙은 문항은 답이 갈릴 수 있거나 공식 정답을 확인하지 못한 문항입니다. 예시 답안은 공식 정답이 아닙니다.</li></ul>
-<h3>질문·의견과 문의</h3><ul>
-<li>문항 아래 <b>질문·의견</b>에 질문, 의견, 오류 제보를 남기면 스터디원 모두가 봅니다. 내가 쓴 글은 <b>수정</b>할 수 있습니다(쓴 기기에서).</li>
-<li>앱에 대한 요청은 위쪽 <b>문의</b> 단추로 보내 주세요.</li></ul>
-<h3>내 기록</h3><ul>
-<li><b>내 기록</b>에서 영역별 진도를 보고, 다시 볼 것·메모만 모아 인쇄하거나, 기록을 파일로 내보내 다른 기기로 옮길 수 있습니다.</li></ul>
-<h3>단축키 (PC)</h3><table>
-<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>이전 · 다음 문항(지금 고른 과목·학년도·순서의 목록대로)</td></tr>
-<tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>문항 화면: 화면을 크게 위·아래로 / 목록: 줄 옮기기</td></tr>
-<tr><td><kbd>Enter</kbd></td><td>목록에서 고른 줄 열기(문항 화면에서는 정답 보기)</td></tr>
-<tr><td><kbd>Space</kbd></td><td>정답 보기 · 다시 가리기</td></tr>
-<tr><td><kbd>1</kbd> · <kbd>2</kbd></td><td>풀었음 · 다시 볼 것</td></tr>
-<tr><td><kbd>/</kbd></td><td>검색 칸으로</td></tr>
-<tr><td><kbd>?</kbd></td><td>이 도움말</td></tr>
-<tr><td><kbd>Esc</kbd></td><td>창 닫기 · 문항 화면에서는 목록으로</td></tr></table>
-<p class="cap">휴대폰에서는 문항을 좌우로 밀면 이전·다음으로 넘어가고, 아래쪽 단추로 정답·표시를 누릅니다.</p>
+<div class="hrow"><span class="hi" data-i="search"></span><div><b>찾기</b><span class="d">왼쪽에서 과목·학년도를 고르거나 낱말로 검색. '전체'나 '초기화'로 되돌림</span></div></div>
+<div class="hrow"><span class="hi" data-i="eye"></span><div><b>정답 보기</b><span class="d">정답 칸을 누르면 풀이까지 열림. 다시 누르면 가려짐</span></div></div>
+<div class="hrow"><span class="hi" data-i="done"></span><div><b>풀었음 · 다시 볼 것</b><span class="d">표시해 두면 때맞춰 '오늘 복습'에 다시 나옴</span></div></div>
+<div class="hrow"><span class="hi" data-i="mail"></span><div><b>질문 · 문의</b><span class="d">문항 아래 '질문·의견', 위쪽 '문의'. 스터디원 모두에게 보임</span></div></div>
+<div class="hrow"><span class="hi" data-i="chart"></span><div><b>내 기록</b><span class="d">진도, 오답 인쇄, 기록 옮기기. 기록은 이 기기에만 저장</span></div></div>
+<div class="keys">
+<span><kbd>←</kbd><kbd>→</kbd>이전 · 다음 문항</span><span><kbd>↑</kbd><kbd>↓</kbd>화면 넘기기 · 줄 옮기기</span>
+<span><kbd>Space</kbd>정답 보기 · 가리기</span><span><kbd>Enter</kbd>고른 문항 열기</span>
+<span><kbd>1</kbd><kbd>2</kbd>풀었음 · 다시 볼 것</span><span><kbd>/</kbd>검색</span>
+<span><kbd>Esc</kbd>목록으로 · 창 닫기</span><span><kbd>?</kbd>도움말</span></div>
+<p class="cap">예시 답안은 공식 정답이 아닙니다. 휴대폰에서는 좌우로 밀어 이전·다음.</p>
 <div class="marks"><button id="help-x" type="button">닫기</button></div></div></div>
 <div id="print"></div>
 <div id="lock"><form id="lockf"><h2>기출 찾아보기</h2>
@@ -431,6 +433,7 @@ const IC = {
   flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 15h9"/>',
   gene: '<path d="M7 3c0 5 10 13 10 18M17 3c0 5-10 13-10 18"/><circle cx="12" cy="12" r="1.6"/>',
   shield: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>'};
 const ic = (k, c) => `<svg class="ic${c ? " " + c : ""}" viewBox="0 0 24 24" aria-hidden="true">${IC[k] || IC.book}</svg>`;
@@ -439,6 +442,9 @@ const AIC = {"생물교육론": "cap", "세포학": "cell", "분자생물학": "
 const YRS = Q.map(q => q.year), SPAN = Math.min(...YRS) + "~" + Math.max(...YRS) + "학년도 · " + Q.length + "문항";
 document.getElementById("sub").textContent = SPAN; $("logo-sub").textContent = SPAN;
 $("logo-ic").innerHTML = ic("dna"); $("sbox-ic").innerHTML = ic("search");
+document.querySelectorAll("[data-i]").forEach(e => e.innerHTML = ic(e.dataset.i));
+$("clr").innerHTML = ic("again") + "초기화";
+$("clr").onclick = () => { FIDS.filter(id => id !== "f-sort").forEach(id => $(id).selectedIndex = 0); $("f-q").value = ""; changed(); };
 $("ask").innerHTML = ic("mail") + "문의"; $("more").innerHTML = ic("chart") + "내 기록";
 // 왼쪽 메뉴의 묶음(과목·학년도·학습 도우미)은 머리를 눌러 접고 편다. 접어도 고른 것은 머리 오른쪽에 남는다
 const sideOpen = Object.assign({area: true, year: true, study: false}, store.get("imyong-side", {}));
@@ -608,10 +614,11 @@ function render() {
   $("cards").querySelector(".scard.c").onclick = e => { const id = e.currentTarget.dataset.q; if (id) go(id); };
   // 왼쪽 메뉴의 과목·학년도: 누르면 그 범위만, 다시 누르면 풀린다. 과목 옆 숫자는 고른 학년도 안의 문항 수, 고른 과목에 문항이 없는 학년도는 흐리게
   const fa = $("f-area").value, fy = $("f-year").value;
-  $("subjects").innerHTML = uniq(Q.map(q => q.area)).sort((p, q) => Q.filter(x => x.area === q).length - Q.filter(x => x.area === p).length)
+  $("clr").hidden = !(active || st || $("f-q").value.trim());
+  $("subjects").innerHTML = `<button class="subj${fa ? "" : " on"}" type="button" data-a="">${ic("list")}<span class="nm">전체 과목</span><span>${Q.filter(x => !fy || String(x.year) === fy).length}</span></button>` + uniq(Q.map(q => q.area)).sort((p, q) => Q.filter(x => x.area === q).length - Q.filter(x => x.area === p).length)
     .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${ic(AIC[v])}<span class="nm">${esc(v)}</span><span>${Q.filter(x => x.area === v && (!fy || String(x.year) === fy)).length}</span></button>`).join("");
   $("subjects").querySelectorAll(".subj").forEach(b => b.onclick = () => { $("f-area").value = fa === b.dataset.a ? "" : b.dataset.a; changed(); });
-  $("years").innerHTML = uniq(Q.map(q => q.year)).sort((a, b) => b - a)
+  $("years").innerHTML = `<button class="yr all${fy ? "" : " on"}" type="button" data-y="">전체</button>` + uniq(Q.map(q => q.year)).sort((a, b) => b - a)
     .map(y => `<button class="yr${fy === String(y) ? " on" : ""}${Q.some(x => x.year === y && (!fa || x.area === fa)) ? "" : " zero"}" type="button" data-y="${y}" title="${y}학년도">${y}</button>`).join("");
   const stName = {todo: "안 푼 문항", again: "다시 볼 것", due: "오늘 복습", done: "풀었음"}[st] || "";
   $("sg-area").textContent = fa; $("sg-year").textContent = fy; $("sg-study").textContent = stName || (nDue ? "복습 " + nDue : "");
@@ -779,7 +786,7 @@ document.addEventListener("keydown", e => {
   }
   if (!current || !$("ans")) return;
   // 문항: ↑↓ 는 화면을 크게(화면 높이의 70%) 부드럽게 넘긴다
-  if (down || up) { e.preventDefault(); window.scrollBy({top: (down ? 1 : -1) * window.innerHeight * 0.7, behavior: "smooth"}); return; }
+  if (down || up) { e.preventDefault(); window.scrollBy({top: (down ? 1 : -1) * window.innerHeight * (e.repeat ? 0.14 : 0.7), behavior: e.repeat ? "instant" : "smooth"}); return; }
   if (e.key === "ArrowLeft") $("prev").click(); else if (e.key === "ArrowRight") $("next").click();
   else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
   else if (e.key === "1") $("m-done").click(); else if (e.key === "2") $("m-again").click();

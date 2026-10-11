@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>기출 찾아보기</title>
+<title>생물 임용 기출 찾아보기</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
@@ -261,21 +261,57 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
 .yr{border:0;background:none;border-radius:8px;padding:5px 0;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .yr:hover{background:var(--hover);color:var(--ink)}.yr.on{color:var(--accent);font-weight:700;background:var(--accent-soft)}.yr.zero{opacity:.35}
 @media (max-width:820px){.side #years{display:none}}
+
+/* 왼쪽 메뉴(2026-10-11): 제목 → 검색 → 과목 · 학년도 · 학습 도우미(접고 펴는 묶음). 아이콘은 선으로 그린 SVG(ic) */
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+@media (min-width:821px){.shell{grid-template-columns:248px minmax(0,1fr)}.side{padding:16px 12px;gap:10px}}
+.logo{padding:2px 4px 4px;gap:10px;align-items:center}
+.logo i{width:38px;height:38px;border-radius:12px;flex:none}.logo i .ic{width:22px;height:22px}
+.logo b{display:block;font-size:15px;line-height:1.3;letter-spacing:-.01em}.logo span{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin-top:1px}
+.sbox{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 10px;color:var(--muted);min-width:0}
+.sbox:focus-within{border-color:var(--accent);color:var(--accent)}
+.sbox input[type=search]{flex:1;min-width:0;border:0;background:none;padding:9px 0;font-size:14px;color:var(--ink);outline:0;border-radius:0}
+.sbox kbd{font-size:11px;border:1px solid var(--line);border-radius:5px;padding:0 5px;color:var(--muted);background:var(--card)}
+.sg{border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.sgh{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;padding:8px 10px 8px 8px;font-size:13.5px;font-weight:700;color:var(--ink);text-align:left;border-radius:14px}
+.sgh:hover{background:var(--hover)}
+.sgh .bx{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none}.sgh .bx .ic{width:16px;height:16px}
+.sg[data-k=area] .bx{background:var(--mint);color:var(--mint-ink)}.sg[data-k=year] .bx{background:var(--sky);color:var(--sky-ink)}.sg[data-k=study] .bx{background:var(--peach);color:var(--peach-ink)}
+.sgh .nm{flex:1;min-width:0}
+.sgh em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px;white-space:nowrap;max-width:92px;overflow:hidden;text-overflow:ellipsis}
+.sgh em:empty{display:none}
+.sgh .chev{width:14px;height:14px;color:var(--muted);transition:transform .15s}.sg.open .sgh .chev{transform:rotate(90deg)}
+.sg>.sgb{padding:2px 6px 8px}.sg:not(.open)>.sgb{display:none}
+.subj{align-items:center;justify-content:flex-start;padding:6px 8px;gap:8px;display:flex}.subj .nm{flex:1;min-width:0;font-variant-numeric:normal}
+.subj .ic,.tabs button .ic{width:16px;height:16px;opacity:.8}.subj.on .ic,.tabs button.on .ic{opacity:1}
+.tabs button{justify-content:flex-start;padding:7px 8px;font-size:13px}.tabs button .nm{flex:1}
+.years{padding:2px 6px 8px;grid-template-columns:repeat(4,1fr)}.yr{font-size:12.5px}
+header .top{justify-content:flex-end;gap:8px}
+#scope{flex:1;min-width:0;font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#scope span{color:var(--muted);font-weight:500}
+.hbtn{display:inline-flex;align-items:center;gap:6px}.hbtn .ic{width:15px;height:15px}
+@media (max-width:820px){
+  .side{gap:0;padding:4px 6px calc(4px + env(safe-area-inset-bottom))}
+  .sg{display:contents}.sgh,.sg>.sgb{display:none}
+  .sg>#tabs.sgb{display:flex;padding:0}.tabs button{flex-direction:column;justify-content:center;padding:5px 2px;font-size:10.5px;gap:1px}.tabs button .nm{flex:none}.tabs button .ic{width:18px;height:18px}
+  #scope{display:none}header .top{flex-wrap:wrap;justify-content:flex-start;gap:6px}.brand{flex:1}
+  header h1{font-size:15px;margin:0}.brand .sub{font-size:11px}.hbtn{padding:6px 7px;font-size:12px}.hbtn.q{width:28px;padding:6px 0}
+  .top .sbox{order:3;flex:1 1 100%}.sbox input[type=search]{font-size:16px}.sbox kbd{display:none}.hbtn .ic{display:none}
+}
 </style></head><body>
 <div class="shell">
 <aside class="side">
-  <div class="logo"><i>기</i>기출 찾아보기</div>
-  <div class="tabs" id="tabs"></div>
-  <div class="sidecap">과목</div>
-  <div id="subjects"></div>
-  <div class="sidecap">학년도</div>
-  <div id="years" class="years"></div>
+  <div class="logo"><i id="logo-ic"></i><div><b>생물 임용 기출 찾아보기</b><span id="logo-sub"></span></div></div>
+  <label class="sbox" id="sbox"><span id="sbox-ic"></span><input type="search" id="f-q" placeholder="낱말로 찾기 (오페론, 2022 A6)" aria-label="낱말로 찾기"><kbd>/</kbd></label>
+  <div class="sg" data-k="area"><button class="sgh" type="button" data-ic="book" data-t="과목"></button><div class="sgb" id="subjects"></div></div>
+  <div class="sg" data-k="year"><button class="sgh" type="button" data-ic="cal" data-t="학년도"></button><div class="sgb years" id="years"></div></div>
+  <div class="sg" data-k="study"><button class="sgh" type="button" data-ic="target" data-t="학습 도우미"></button><div class="sgb tabs" id="tabs"></div></div>
 </aside>
 <div class="main">
 <header>
   <div class="top">
-    <div class="brand"><h1>기출 찾아보기</h1><div class="sub" id="sub"></div></div>
-    <input type="search" id="f-q" placeholder="낱말로 찾기 (예: 오페론, 시스템, 2022 A6)">
+    <div class="brand"><h1>생물 임용 기출 찾아보기</h1><div class="sub" id="sub"></div></div>
+    <div id="scope"></div>
     <button class="hbtn" id="ask" type="button" title="개발자에게 문의" hidden>문의</button>
     <button class="hbtn" id="more" type="button">내 기록</button>
     <button class="hbtn" id="dark" type="button">어둡게</button>
@@ -317,8 +353,9 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
 <div id="ask-body"></div><div id="dev-box" class="cap" style="margin-top:10px"></div><div class="marks"><button id="ask-x" type="button">닫기</button></div></div></div>
 <div id="helpb"><div class="box"><h2>도움말</h2>
 <h3>문항 찾기</h3><ul>
-<li>왼쪽 메뉴(휴대폰은 아래 탭)에서 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다. 첫 화면의 카드를 눌러도 됩니다.</li>
-<li>왼쪽 <b>과목</b>·<b>학년도</b>(둘을 함께 고를 수 있고, 다시 누르면 풀립니다)나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
+<li>왼쪽 메뉴의 <b>과목</b>·<b>학년도</b>·<b>학습 도우미</b>는 머리를 눌러 접고 폅니다. 접어 두어도 고른 것은 머리 오른쪽에 표시됩니다.</li>
+<li><b>학습 도우미</b>(휴대폰은 아래 탭)에서 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다. 첫 화면의 카드를 눌러도 됩니다.</li>
+<li>왼쪽 <b>과목</b>·<b>학년도</b>(둘을 함께 고를 수 있고, 다시 누르면 풀립니다)나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 왼쪽 위 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
 <li>순서를 <b>무작위</b>로 두면 섞어 풀 수 있습니다.</li></ul>
 <h3>문항 풀기</h3><ul>
 <li>문제를 푼 뒤 <b>정답</b> 칸을 누르면 정답·풀이·채점 요소가 함께 열립니다. 한 번 더 누르면(또는 <kbd>Space</kbd>) 다시 가려집니다.</li>
@@ -371,7 +408,47 @@ const FIDS = ["f-status", "f-year", "f-area", "f-unit", "f-type", "f-flag", "f-s
 const KCLS = {"답이 갈릴 수 있음": "split", "책에 없는 내용": "nobook", "공식 정답 미확인": "unoff", "판독·추정": "read"};
 const kinds = (q, only) => q.kinds.filter(k => !only || only.includes(k)).map(k => `<span class="k ${KCLS[k]}">${esc(k)}</span>`).join("");
 const PARTIAL = new Set(DATA.partialAreas || []);
-document.getElementById("sub").textContent = DATA.title + " · " + Q.length + "문항";
+const IC = {
+  dna: '<path d="M7 3c0 5 10 7 10 12 0 2-1 4-3 6"/><path d="M17 3c0 5-10 7-10 12 0 2 1 4 3 6"/><path d="M8.6 7h6.8M8.6 17h6.8"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/>',
+  book: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+  cal: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  chev: '<path d="m9 6 6 6-6 6"/>',
+  list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+  todo: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="3 3"/>',
+  again: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  due: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 15.5 2 2 4-4"/>',
+  done: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  cap: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"/>',
+  cell: '<circle cx="12" cy="12" r="9"/><circle cx="13.5" cy="10.5" r="3"/><path d="M7.5 15h.01M10 17.5h.01"/>',
+  heart: '<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.3a5 5 0 0 0 0-7.1z"/>',
+  leaf: '<path d="M5 19C5 10 10 5 20 5c0 10-5 15-15 14z"/><path d="M5 19l9-9"/>',
+  tree: '<path d="M12 21v-8M12 13 6 7V3M12 13l6-6V3M12 9V3"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  egg: '<path d="M12 3c4 0 7 6 7 10a7 7 0 0 1-14 0c0-4 3-10 7-10z"/>',
+  germ: '<rect x="5" y="8" width="14" height="8" rx="4"/><path d="M8 8V5M12 8V4M16 8V5M8 16v3M12 16v4M16 16v3"/>',
+  flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 15h9"/>',
+  gene: '<path d="M7 3c0 5 10 13 10 18M17 3c0 5-10 13-10 18"/><circle cx="12" cy="12" r="1.6"/>',
+  shield: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>'};
+const ic = (k, c) => `<svg class="ic${c ? " " + c : ""}" viewBox="0 0 24 24" aria-hidden="true">${IC[k] || IC.book}</svg>`;
+const AIC = {"생물교육론": "cap", "세포학": "cell", "분자생물학": "dna", "동물생리학": "heart", "식물학": "leaf", "진화·분류학": "tree", "생태학": "globe",
+  "발생학": "egg", "미생물학": "germ", "생화학": "flask", "유전학": "gene", "면역학": "shield"};
+const YRS = Q.map(q => q.year), SPAN = Math.min(...YRS) + "~" + Math.max(...YRS) + "학년도 · " + Q.length + "문항";
+document.getElementById("sub").textContent = SPAN; $("logo-sub").textContent = SPAN;
+$("logo-ic").innerHTML = ic("dna"); $("sbox-ic").innerHTML = ic("search");
+$("ask").innerHTML = ic("mail") + "문의"; $("more").innerHTML = ic("chart") + "내 기록";
+// 왼쪽 메뉴의 묶음(과목·학년도·학습 도우미)은 머리를 눌러 접고 편다. 접어도 고른 것은 머리 오른쪽에 남는다
+const sideOpen = Object.assign({area: true, year: true, study: false}, store.get("imyong-side", {}));
+document.querySelectorAll(".sg").forEach(g => { const h = g.querySelector(".sgh"), k = g.dataset.k;
+  h.innerHTML = `<span class="bx">${ic(h.dataset.ic)}</span><span class="nm">${h.dataset.t}</span><em id="sg-${k}"></em>${ic("chev", "chev")}`;
+  const set = () => { g.classList.toggle("open", sideOpen[k]); h.setAttribute("aria-expanded", sideOpen[k]); }; set();
+  h.onclick = () => { sideOpen[k] = !sideOpen[k]; store.set("imyong-side", sideOpen); set(); }; });
+// 검색 칸: 넓은 화면은 왼쪽 메뉴(제목 아래), 휴대폰은 위쪽 띠
+const narrow = matchMedia("(max-width:820px)"), placeSearch = () => { if (narrow.matches) document.querySelector("header .top").insertBefore($("sbox"), $("ask")); else document.querySelector(".side .logo").after($("sbox")); };
+placeSearch(); narrow.addEventListener("change", placeSearch);
 // ---- 게시판: 글 하나 = 비공개 저장소의 이슈 하나(제목 "[문항id] 종류 · 닉네임"), 답글 = 그 이슈의 댓글.
 // 열쇠(토큰)는 암호화된 자료 안에 들어 있어 비밀번호를 푼 사람만 읽고 쓸 수 있다. 로그인은 없고 닉네임만 적는다.
 const BOARD = DATA.board || null, KINDS = ["질문", "의견", "오류 제보"];
@@ -516,7 +593,7 @@ function render() {
   $("advbtn").textContent = $("filters").classList.contains("adv-on") ? "접기" : "더 보기";
   const st = $("f-status").value, nDue = Q.filter(q => due(q.id)).length;
   $("tabs").innerHTML = [["", "전체", Q.length], ["todo", "안 푼 문항", Q.length - done - again], ["again", "다시 볼 것", again], ["due", "오늘 복습", nDue], ["done", "풀었음", done]]
-    .map(([v, t, n]) => `<button type="button" data-v="${v}" class="${st === v ? "on" : ""}${v === "due" && nDue ? " due" : ""}">${t}<b>${n}</b></button>`).join("");
+    .map(([v, t, n]) => `<button type="button" data-v="${v}" class="${st === v ? "on" : ""}${v === "due" && nDue ? " due" : ""}">${ic(v || "list")}<span class="nm">${t}</span><b>${n}</b></button>`).join("");
   $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { $("f-status").value = b.dataset.v; changed(); });
   $("stat").innerHTML = `<span class="cnt">${rows.length}문항 · ${pts}점</span>`;
   const lastId = store.get("imyong-last", null), lq = lastId && Q.find(x => x.id === lastId), pct = Q.length ? Math.round(100 * done / Q.length) : 0;
@@ -532,10 +609,13 @@ function render() {
   // 왼쪽 메뉴의 과목·학년도: 누르면 그 범위만, 다시 누르면 풀린다. 과목 옆 숫자는 고른 학년도 안의 문항 수, 고른 과목에 문항이 없는 학년도는 흐리게
   const fa = $("f-area").value, fy = $("f-year").value;
   $("subjects").innerHTML = uniq(Q.map(q => q.area)).sort((p, q) => Q.filter(x => x.area === q).length - Q.filter(x => x.area === p).length)
-    .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${esc(v)}<span>${Q.filter(x => x.area === v && (!fy || String(x.year) === fy)).length}</span></button>`).join("");
+    .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${ic(AIC[v])}<span class="nm">${esc(v)}</span><span>${Q.filter(x => x.area === v && (!fy || String(x.year) === fy)).length}</span></button>`).join("");
   $("subjects").querySelectorAll(".subj").forEach(b => b.onclick = () => { $("f-area").value = fa === b.dataset.a ? "" : b.dataset.a; changed(); });
   $("years").innerHTML = uniq(Q.map(q => q.year)).sort((a, b) => b - a)
     .map(y => `<button class="yr${fy === String(y) ? " on" : ""}${Q.some(x => x.year === y && (!fa || x.area === fa)) ? "" : " zero"}" type="button" data-y="${y}" title="${y}학년도">${y}</button>`).join("");
+  const stName = {todo: "안 푼 문항", again: "다시 볼 것", due: "오늘 복습", done: "풀었음"}[st] || "";
+  $("sg-area").textContent = fa; $("sg-year").textContent = fy; $("sg-study").textContent = stName || (nDue ? "복습 " + nDue : "");
+  $("scope").innerHTML = esc(fa || "전체 과목") + `<span> · ${fy ? fy + "학년도" : "전 학년도"}${stName ? " · " + stName : ""} · ${rows.length}문항</span>`;
   $("years").querySelectorAll(".yr").forEach(b => b.onclick = () => { $("f-year").value = fy === b.dataset.y ? "" : b.dataset.y; changed(); });
   let html = "", last = null;
   const talk = {}; (posts || []).forEach(p => talk[p.qid] = (talk[p.qid] || 0) + 1);

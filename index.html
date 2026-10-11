@@ -133,7 +133,7 @@ header{display:block;padding:12px 20px 10px}
 .hbtn.q{width:34px;padding:9px 0;font-weight:700;border-radius:50%}
 .bp .mini,.bc .mini{margin:0 4px 0 0}.bc{margin:8px 0}
 .bp{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
-.bh{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}.bh b{color:var(--ink);font-size:13px}
+.bh{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}.bh b{color:var(--ink);font-size:13px}.bh b.devn{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:1px 9px;font-size:12px}
 .bt{white-space:pre-wrap;word-break:break-word;margin:6px 0;font-size:14px;line-height:1.6}
 .bp .mini{margin-left:0}.br{margin:8px 0 0 4px;padding-left:10px;border-left:3px solid var(--line)}
 .bform{display:grid;gap:6px;margin-top:10px}.bform .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -394,14 +394,15 @@ function loadPosts(force) {
   return postsP;
 }
 const when = t => { const d = new Date(t); return isNaN(d) ? "" : d.toLocaleDateString("ko-KR", {year: "2-digit", month: "numeric", day: "numeric"}); };
-const said = (nick, at, text) => `<div class="bh"><b>${esc(nick)}</b><span>${when(at)}</span></div><div class="bt">${esc(text)}</div>`;
+const who = n => `<b${n === "개발자" ? ' class="devn"' : ""}>${esc(n)}</b>`;
+const said = (nick, at, text) => `<div class="bh">${who(nick)}<span>${when(at)}</span></div><div class="bt">${esc(text)}</div>`;
 async function drawBoard(root, qid, kinds, hint) {
   if (!root.children.length) root.innerHTML = `<p class="cap">불러오는 중…</p>`;
   let list;
   try { list = (await loadPosts()).filter(p => p.qid === qid).sort((a, b) => a.n - b.n); }
   catch (e) { root.innerHTML = `<p class="cap">${esc(e.message)}</p>`; return; }
   const redraw = () => drawBoard(root, qid, kinds, hint);
-  root.innerHTML = (list.map(p => `<div class="bp" data-n="${p.n}"><div class="bh"><span class="chip${p.closed ? " ok" : ""}">${esc(p.kind || "글")}${p.closed ? " · 해결됨" : ""}</span><b>${esc(p.nick)}</b><span>${when(p.at)}</span></div>` +
+  root.innerHTML = (list.map(p => `<div class="bp" data-n="${p.n}"><div class="bh"><span class="chip${p.closed ? " ok" : ""}">${esc(p.kind || "글")}${p.closed ? " · 해결됨" : ""}</span>${who(p.nick)}<span>${when(p.at)}</span></div>` +
       `<div class="bt">${esc(p.text)}</div><button class="mini rp" type="button">${p.replies ? "답글 " + p.replies + "개 보기" : "답글 달기"}</button>` +
       acts(dev || mine.p.includes(p.n)) + (dev ? `<button class="mini cl" type="button">${p.closed ? "해결됨 해제" : "해결됨 표시"}</button>` : "") + `<div class="br" hidden></div></div>`).join("") ||
       `<p class="cap">아직 글이 없습니다.</p>`) +
@@ -409,7 +410,7 @@ async function drawBoard(root, qid, kinds, hint) {
     `<input class="bn" maxlength="20" placeholder="닉네임" value="${esc(dev ? "개발자" : store.get("imyong-nick", ""))}"></div>` +
     `<textarea class="bx" maxlength="2000" placeholder="${esc(hint)}"></textarea>` +
     `<div class="row"><button class="toggle bs" type="button">올리기</button><span class="cap">글은 스터디원 모두에게 보입니다.</span></div></div>`;
-  const nick = () => { const v = root.querySelector(".bn").value.trim().replace(/·/g, " "); if (!dev) store.set("imyong-nick", v); return v; };
+  const nick = () => { const v = root.querySelector(".bn").value.trim().replace(/·/g, " "); if (!dev && v.replace(/\s/g, "") === "개발자") { v = ""; root.querySelector(".bn").value = ""; } if (!dev) store.set("imyong-nick", v); return v; };
   const form = root.lastElementChild, btn = form.querySelector(".bs");
   btn.onclick = async () => {
     const text = form.querySelector(".bx").value.trim(); if (!text) return;
@@ -429,7 +430,7 @@ async function drawBoard(root, qid, kinds, hint) {
     const open = async () => {
       box.hidden = false; box.innerHTML = `<p class="cap">불러오는 중…</p>`;
       let cs = []; try { if (p.replies) cs = await gh(`/issues/${p.n}/comments?per_page=100`); } catch (e) { box.innerHTML = `<p class="cap">${esc(e.message)}</p>`; return; }
-      box.innerHTML = cs.map(c => { const b = unpack(c.body); return `<div class="bc" data-id="${c.id}"><div class="bh"><b>${esc(b.nick)}</b><span>${when(c.created_at)}</span></div><div class="bt">${esc(b.text)}</div>${acts(dev || mine.c.includes(c.id))}</div>`; }).join("") +
+      box.innerHTML = cs.map(c => { const b = unpack(c.body); return `<div class="bc" data-id="${c.id}"><div class="bh">${who(b.nick)}<span>${when(c.created_at)}</span></div><div class="bt">${esc(b.text)}</div>${acts(dev || mine.c.includes(c.id))}</div>`; }).join("") +
         `<div class="bform"><textarea class="bx" maxlength="2000" placeholder="답글 (닉네임은 아래 칸에 적은 것을 씁니다)"></textarea><div class="row"><button class="toggle bs" type="button">답글 올리기</button></div></div>`;
       box.querySelectorAll(".bc").forEach(ce => { const c = cs.find(x => x.id === +ce.dataset.id), b = unpack(c.body);
         if (ce.querySelector(".ed")) ce.querySelector(".ed").onclick = () => editor(ce.querySelector(".bt"), b.text, async v => { await gh(`/issues/comments/${c.id}`, {body: pack(b.nick, v)}, "PATCH"); open(); });

@@ -778,15 +778,17 @@ document.addEventListener("keydown", e => {
     // 목록: ↑↓ 로 줄을 옮기고 Enter(또는 →)로 연다
     const items = [...$("list").querySelectorAll(".item")]; if (!items.length) return;
     let i = items.findIndex(x => x.classList.contains("on"));
-    if (down || up) { e.preventDefault(); i = i < 0 ? 0 : Math.max(0, Math.min(items.length - 1, i + (down ? 1 : -1)));
-      items.forEach(x => x.classList.remove("on")); items[i].classList.add("on"); cursor = items[i].dataset.id;
-      items[i].scrollIntoView({behavior: e.repeat ? "auto" : "smooth", block: "center"}); }
+    // 누르고 있으면(e.repeat) 세 줄씩 건너뛰며 곧바로 옮긴다
+    if (down || up) { e.preventDefault(); const was = items[i];
+      i = i < 0 ? 0 : Math.max(0, Math.min(items.length - 1, i + (down ? 1 : -1) * (e.repeat ? 3 : 1)));
+      if (was) was.classList.remove("on"); items[i].classList.add("on"); cursor = items[i].dataset.id;
+      items[i].scrollIntoView({behavior: e.repeat ? "instant" : "smooth", block: "center"}); }
     else if (e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); go(items[Math.max(i, 0)].dataset.id); }
     return;
   }
   if (!current || !$("ans")) return;
   // 문항: ↑↓ 는 화면을 크게(화면 높이의 70%) 부드럽게 넘긴다
-  if (down || up) { e.preventDefault(); window.scrollBy({top: (down ? 1 : -1) * window.innerHeight * (e.repeat ? 0.14 : 0.7), behavior: e.repeat ? "instant" : "smooth"}); return; }
+  if (down || up) { e.preventDefault(); window.scrollBy({top: (down ? 1 : -1) * window.innerHeight * (e.repeat ? 0.22 : 0.7), behavior: e.repeat ? "instant" : "smooth"}); return; }
   if (e.key === "ArrowLeft") $("prev").click(); else if (e.key === "ArrowRight") $("next").click();
   else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
   else if (e.key === "1") $("m-done").click(); else if (e.key === "2") $("m-again").click();

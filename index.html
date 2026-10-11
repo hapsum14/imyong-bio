@@ -249,6 +249,18 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
   #fbtn{color:var(--ink);border:1px solid var(--line);border-radius:10px}
   .detail>.sec,.detail>details.sec,.qgrid .sec{padding:12px;border-radius:12px}
 }
+
+/* 강조 단추(2026-10-11): 올리기, 가려진 정답 칸, 휴대폰의 '정답'만 강조색. 삭제는 빨강 */
+:root{--danger:#D92D20}body.dark{--danger:#FF9A8F}
+.bform .bs{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.mini.rm{color:var(--danger);border-color:var(--danger)}
+.answer{border:2px solid transparent}
+.answer.hide{border:2px dashed var(--accent)}.answer.hide::after{color:var(--accent)}
+.bnav #b-ans{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.years{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:0 4px}
+.yr{border:0;background:none;border-radius:8px;padding:5px 0;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.yr:hover{background:var(--hover);color:var(--ink)}.yr.on{color:var(--accent);font-weight:700;background:var(--accent-soft)}.yr.zero{opacity:.35}
+@media (max-width:820px){.side #years{display:none}}
 </style></head><body>
 <div class="shell">
 <aside class="side">
@@ -256,6 +268,8 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
   <div class="tabs" id="tabs"></div>
   <div class="sidecap">과목</div>
   <div id="subjects"></div>
+  <div class="sidecap">학년도</div>
+  <div id="years" class="years"></div>
 </aside>
 <div class="main">
 <header>
@@ -304,7 +318,7 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
 <div id="helpb"><div class="box"><h2>도움말</h2>
 <h3>문항 찾기</h3><ul>
 <li>왼쪽 메뉴(휴대폰은 아래 탭)에서 <b>전체 / 안 푼 문항 / 다시 볼 것 / 오늘 복습 / 풀었음</b>을 고릅니다. 첫 화면의 카드를 눌러도 됩니다.</li>
-<li>왼쪽 <b>과목</b>이나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
+<li>왼쪽 <b>과목</b>·<b>학년도</b>(둘을 함께 고를 수 있고, 다시 누르면 풀립니다)나 목록 위 <b>범위</b>에서 영역(과목)·학년도·단원을 좁히고, 검색 칸에 낱말(예: 오페론, 2022 A6)을 넣어 찾습니다.</li>
 <li>순서를 <b>무작위</b>로 두면 섞어 풀 수 있습니다.</li></ul>
 <h3>문항 풀기</h3><ul>
 <li>문제를 푼 뒤 <b>정답</b> 칸을 누르면 정답·풀이·채점 요소가 함께 열립니다. 한 번 더 누르면(또는 <kbd>Space</kbd>) 다시 가려집니다.</li>
@@ -317,12 +331,14 @@ body.dark mark{background:#7a6a12;color:#fff}body.dark #helpb h3{color:var(--acc
 <h3>내 기록</h3><ul>
 <li><b>내 기록</b>에서 영역별 진도를 보고, 다시 볼 것·메모만 모아 인쇄하거나, 기록을 파일로 내보내 다른 기기로 옮길 수 있습니다.</li></ul>
 <h3>단축키 (PC)</h3><table>
-<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>이전 · 다음 문항</td></tr>
+<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>이전 · 다음 문항(지금 고른 과목·학년도·순서의 목록대로)</td></tr>
+<tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>문항 화면: 화면을 크게 위·아래로 / 목록: 줄 옮기기</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>목록에서 고른 줄 열기(문항 화면에서는 정답 보기)</td></tr>
 <tr><td><kbd>Space</kbd></td><td>정답 보기 · 다시 가리기</td></tr>
 <tr><td><kbd>1</kbd> · <kbd>2</kbd></td><td>풀었음 · 다시 볼 것</td></tr>
 <tr><td><kbd>/</kbd></td><td>검색 칸으로</td></tr>
 <tr><td><kbd>?</kbd></td><td>이 도움말</td></tr>
-<tr><td><kbd>Esc</kbd></td><td>창 닫기</td></tr></table>
+<tr><td><kbd>Esc</kbd></td><td>창 닫기 · 문항 화면에서는 목록으로</td></tr></table>
 <p class="cap">휴대폰에서는 문항을 좌우로 밀면 이전·다음으로 넘어가고, 아래쪽 단추로 정답·표시를 누릅니다.</p>
 <div class="marks"><button id="help-x" type="button">닫기</button></div></div></div>
 <div id="print"></div>
@@ -343,7 +359,7 @@ const store = {
 };
 let flip = () => false;  // 지금 열린 문항의 정답을 열고 닫는 함수(show 가 바꿔 넣는다)
 let opened = false;      // 이 화면 안에서 목록 → 문항으로 들어왔는가(그래야 뒤로 가기가 목록으로 돌아간다)
-let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null;
+let marks = store.get("imyong-marks", {}), hideAnswer = store.get("imyong-hide", true), current = null, cursor = null, navIds = [];
 let notes = store.get("imyong-notes", {}), rnd = {};
 // 간격 반복: seen[id] = {t: 표시한 때(ms), s: 단계}. 다시 볼 것 = 0단계(1일 뒤), 풀었음 = 1단계부터(3·7·21·60일 뒤)
 const DAY = 86400000, GAP = [1, 3, 7, 21, 60];
@@ -513,17 +529,21 @@ function render() {
     `<button class="scard c" type="button" data-q="${lq ? esc(lastId) : ""}"><span class="l">이어 보기</span><span class="v sm">${lq ? esc(lq.title) : "아직 본 문항이 없어요"}</span><span class="s">${lq ? esc(lq.topic) : "문항을 열면 여기에 남습니다"}</span></button>`;
   $("cards").querySelectorAll("[data-go]").forEach(b => b.onclick = () => { $("f-status").value = b.dataset.go; changed(); });
   $("cards").querySelector(".scard.c").onclick = e => { const id = e.currentTarget.dataset.q; if (id) go(id); };
-  const fa = $("f-area").value;
+  // 왼쪽 메뉴의 과목·학년도: 누르면 그 범위만, 다시 누르면 풀린다. 과목 옆 숫자는 고른 학년도 안의 문항 수, 고른 과목에 문항이 없는 학년도는 흐리게
+  const fa = $("f-area").value, fy = $("f-year").value;
   $("subjects").innerHTML = uniq(Q.map(q => q.area)).sort((p, q) => Q.filter(x => x.area === q).length - Q.filter(x => x.area === p).length)
-    .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${esc(v)}<span>${Q.filter(x => x.area === v).length}</span></button>`).join("");
+    .map(v => `<button class="subj${fa === v ? " on" : ""}" type="button" data-a="${esc(v)}">${esc(v)}<span>${Q.filter(x => x.area === v && (!fy || String(x.year) === fy)).length}</span></button>`).join("");
   $("subjects").querySelectorAll(".subj").forEach(b => b.onclick = () => { $("f-area").value = fa === b.dataset.a ? "" : b.dataset.a; changed(); });
+  $("years").innerHTML = uniq(Q.map(q => q.year)).sort((a, b) => b - a)
+    .map(y => `<button class="yr${fy === String(y) ? " on" : ""}${Q.some(x => x.year === y && (!fa || x.area === fa)) ? "" : " zero"}" type="button" data-y="${y}" title="${y}학년도">${y}</button>`).join("");
+  $("years").querySelectorAll(".yr").forEach(b => b.onclick = () => { $("f-year").value = fy === b.dataset.y ? "" : b.dataset.y; changed(); });
   let html = "", last = null;
   const talk = {}; (posts || []).forEach(p => talk[p.qid] = (talk[p.qid] || 0) + 1);
   rows.forEach(q => {
     const g = sort === "unit" ? q.part + " › " + q.chapter : q.year + "학년도";
     if (g !== last && sort !== "points" && sort !== "random") { html += `<div class="group">${esc(g)}</div>`; last = g; }
     const mk = marks[q.id];
-    html += `<div class="item${current === q.id ? " on" : ""}" data-id="${esc(q.id)}">` +
+    html += `<div class="item${(cursor || current) === q.id ? " on" : ""}" data-id="${esc(q.id)}">` +
       `<div class="b"><div class="t">${esc(q.topic)}${notes[q.id] ? " ✎" : ""}${talk[q.id] ? " 💬" + talk[q.id] : ""}</div>` +
       `<div class="m"><span class="mo">${esc(q.title)} · ${esc(q.type)} ${q.points}점 · </span>${esc(sort === "unit" ? q.area : q.chapter)}` +
       (q.kinds.includes("답이 갈릴 수 있음") ? " " + kinds(q, ["답이 갈릴 수 있음"]) : "") + `</div></div>` +
@@ -541,7 +561,7 @@ function go(id, replace) {
 function route() {
   const m = /^#q=(.+)$/.exec(location.hash), id = m && decodeURIComponent(m[1]);
   if (id && Q.some(q => q.id === id)) {
-    current = id; document.body.classList.add("detail-open"); render(); show(id);
+    current = id; cursor = id; document.body.classList.add("detail-open"); render(); show(id);
     const L = $("list"), on = L.querySelector(".item.on");      // 넓은 화면: 왼쪽 목록이 지금 보는 문항을 따라간다
     if (on && L.scrollHeight > L.clientHeight) { const a = on.offsetTop - L.offsetTop; if (a < L.scrollTop + 30 || a > L.scrollTop + L.clientHeight - 80) L.scrollTop = a - L.clientHeight / 3; }
   } else {
@@ -558,7 +578,9 @@ function blocks(list) {
 function show(id, keepScroll) {
   const q = Q.find(x => x.id === id); if (!q) return;
   const sc = q.strength === "직접" ? "ok" : "warn";
-  const rows = filtered(), at = rows.findIndex(x => x.id === id), mk = marks[id];
+  let rows = filtered(), at = rows.findIndex(x => x.id === id); const mk = marks[id];
+  if (at >= 0) navIds = rows.map(x => x.id);
+  else if (navIds.includes(id)) { rows = navIds.map(i => Q.find(x => x.id === i)); at = navIds.indexOf(id); }
   $("detail").innerHTML =
     `<div class="nav"><button id="back">← 목록</button><span class="pos">${at >= 0 ? `${at + 1} / ${rows.length}` : ""}</span>` +
     `<button id="prev" ${at > 0 ? "" : "disabled"}>‹ 이전</button><button id="next" ${at >= 0 && at < rows.length - 1 ? "" : "disabled"}>다음 ›</button></div>` +
@@ -659,11 +681,25 @@ const setDark = v => { document.body.classList.toggle("dark", v); $("dark").text
 setDark(store.get("imyong-dark", false)); $("dark").onclick = () => setDark(!document.body.classList.contains("dark"));
 document.addEventListener("keydown", e => {
   const z = document.getElementById("zoom");
-  if (e.key === "Escape") { if (z.classList.contains("on")) z.click(); else if ($("rec").classList.contains("on")) $("rec").classList.remove("on"); else if ($("askb").classList.contains("on")) $("askb").classList.remove("on"); else if ($("helpb").classList.contains("on")) $("helpb").classList.remove("on"); else if (e.target.blur && /INPUT|TEXTAREA/.test(e.target.tagName)) e.target.blur(); return; }
+  if (e.key === "Escape") { if (z.classList.contains("on")) z.click(); else if ($("rec").classList.contains("on")) $("rec").classList.remove("on"); else if ($("askb").classList.contains("on")) $("askb").classList.remove("on"); else if ($("helpb").classList.contains("on")) $("helpb").classList.remove("on"); else if (e.target.blur && /INPUT|TEXTAREA/.test(e.target.tagName)) e.target.blur(); else if (document.body.classList.contains("detail-open") && $("back")) $("back").click(); return; }
   if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === "/") { e.preventDefault(); $("f-q").focus(); return; }
   if (e.key === "?") { $("helpb").classList.toggle("on"); return; }
+  if (document.querySelector("#rec.on,#askb.on,#helpb.on,#zoom.on")) return;
+  const down = e.key === "ArrowDown", up = e.key === "ArrowUp";
+  if (!document.body.classList.contains("detail-open")) {
+    // 목록: ↑↓ 로 줄을 옮기고 Enter(또는 →)로 연다
+    const items = [...$("list").querySelectorAll(".item")]; if (!items.length) return;
+    let i = items.findIndex(x => x.classList.contains("on"));
+    if (down || up) { e.preventDefault(); i = i < 0 ? 0 : Math.max(0, Math.min(items.length - 1, i + (down ? 1 : -1)));
+      items.forEach(x => x.classList.remove("on")); items[i].classList.add("on"); cursor = items[i].dataset.id;
+      items[i].scrollIntoView({behavior: e.repeat ? "auto" : "smooth", block: "center"}); }
+    else if (e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); go(items[Math.max(i, 0)].dataset.id); }
+    return;
+  }
   if (!current || !$("ans")) return;
+  // 문항: ↑↓ 는 화면을 크게(화면 높이의 70%) 부드럽게 넘긴다
+  if (down || up) { e.preventDefault(); window.scrollBy({top: (down ? 1 : -1) * window.innerHeight * 0.7, behavior: "smooth"}); return; }
   if (e.key === "ArrowLeft") $("prev").click(); else if (e.key === "ArrowRight") $("next").click();
   else if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
   else if (e.key === "1") $("m-done").click(); else if (e.key === "2") $("m-again").click();

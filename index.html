@@ -366,6 +366,18 @@ header .top{justify-content:flex-end;gap:8px}
   .item .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.4}
   .item .m{margin-top:2px;line-height:1.45}
 }
+
+/* 휴대폰(2026-10-12): 요약 카드는 한 줄 띠, 과목·학년도는 아래 탭에서 고르므로 범위 단추에는 단원·순서만, 위쪽 이전/다음은 아래 단추와 겹쳐 숨김 */
+@media (max-width:820px){
+  .cards{gap:6px}.cards .txt{flex:1 1 100%}.cards .txt h2,.cards .txt p{display:none}.cards .txt:not(:has(.cta)){display:none}
+  .cards .cta{width:100%;margin-bottom:2px}
+  .scard{flex:1 1 0;padding:8px 10px;border-radius:12px;gap:0}
+  .scard .l{font-size:11.5px}.scard .v{font-size:17px}.scard .v.sm{font-size:12.5px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .scard .bar,.scard .s{display:none}.scard.c{flex:1.5 1 0}
+  #home{gap:12px}
+  #filters #f-area,#filters #f-year,#filters #f-status{display:none}
+  .detail .nav #prev,.detail .nav #next{display:none}
+}
 </style></head><body>
 <div class="shell">
 <aside class="side">
@@ -659,7 +671,8 @@ function render() {
   const pts = rows.reduce((n, q) => n + (q.points || 0), 0);
   const done = Q.filter(q => marks[q.id] === "done").length, again = Q.filter(q => marks[q.id] === "again").length;
   const active = FIDS.filter(id => id !== "f-sort" && id !== "f-status" && $(id).value).length;
-  $("fbtn").textContent = active ? `범위 고르기 (${active})` : "범위 고르기";
+  const mAct = ["f-unit", "f-type", "f-flag"].filter(id => $(id).value).length;   // 휴대폰: 과목·학년도는 아래 탭에 있으므로 여기서는 세지 않는다
+  $("fbtn").textContent = narrow.matches ? (mAct ? `단원·순서 (${mAct})` : "단원·순서") : active ? `범위 고르기 (${active})` : "범위 고르기";
   $("reset").style.visibility = active ? "" : "hidden";
   if ($("f-type").value || $("f-flag").value) $("filters").classList.add("adv-on");
   $("advbtn").textContent = $("filters").classList.contains("adv-on") ? "접기" : "더 보기";

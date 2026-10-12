@@ -328,6 +328,26 @@ header .top{justify-content:flex-end;gap:8px}
 .racts .ic{width:15px;height:15px}.racts #prt{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700}
 .side{scrollbar-width:thin}
 @media (max-width:820px){#clr{display:none}.rtiles{grid-template-columns:repeat(2,minmax(0,1fr))}.rrow{grid-template-columns:20px 84px minmax(0,1fr) 70px}}
+
+/* 휴대폰 아래 탭(2026-10-11): 과목 · 학년도 · 학습 · 검색. 누르면 PC 왼쪽 메뉴의 그 묶음이 아래에서 올라온다(.sg.sheet) */
+#mnav,#mback{display:none}
+@media (max-width:820px){
+  .sg{display:none}
+  #mnav{display:flex;flex:1;gap:2px;min-width:0}
+  #mnav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0;border:0;background:none;border-radius:10px;padding:5px 2px 3px;color:var(--muted);font-size:11px}
+  #mnav button .ic{width:20px;height:20px}
+  #mnav button.on{color:var(--accent);font-weight:700}#mnav button.open{background:var(--accent-soft);color:var(--accent)}
+  #mnav button em{font-style:normal;font-size:10px;line-height:13px;height:13px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+  #mback.on{display:block;position:fixed;inset:0;background:rgba(15,18,45,.38);z-index:4}
+  .sg.sheet{display:block;position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom));max-height:66vh;overflow:auto;border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;background:var(--card);box-shadow:0 -12px 32px rgba(0,0,0,.2);padding:6px 8px 12px}
+  .sg.sheet .sgh{display:flex;font-size:15px;padding:10px 8px}.sg.sheet .sgh .chev{transform:rotate(90deg)}.sg.sheet .sgh em{display:none}
+  .side .sg.sheet>#subjects{display:block;padding:0 2px}
+  .side .sg.sheet>#years{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:2px 4px}
+  .side .sg.sheet>#tabs{display:flex;flex-direction:column;gap:2px;padding:0 2px}
+  .sg.sheet .subj,.sg.sheet .tabs button{flex-direction:row;justify-content:flex-start;gap:10px;padding:12px 10px;font-size:15px}
+  .sg.sheet .tabs button .nm{flex:1}.sg.sheet .tabs button b{font-size:13px}.sg.sheet .subj .ic,.sg.sheet .tabs button .ic{width:18px;height:18px}
+  .sg.sheet .yr{padding:12px 0;font-size:15px;background:var(--bg)}.sg.sheet .yr.on{background:var(--accent-soft)}
+}
 </style></head><body>
 <div class="shell">
 <aside class="side">
@@ -466,10 +486,23 @@ const sideOpen = Object.assign({area: true, year: true, study: false}, store.get
 document.querySelectorAll(".sg").forEach(g => { const h = g.querySelector(".sgh"), k = g.dataset.k;
   h.innerHTML = `<span class="bx">${ic(h.dataset.ic)}</span><span class="nm">${h.dataset.t}</span><em id="sg-${k}"></em>${ic("chev", "chev")}`;
   const set = () => { g.classList.toggle("open", sideOpen[k]); h.setAttribute("aria-expanded", sideOpen[k]); }; set();
-  h.onclick = () => { sideOpen[k] = !sideOpen[k]; store.set("imyong-side", sideOpen); set(); }; });
+  h.onclick = () => { if (narrow.matches) { setSheet(null); return; } sideOpen[k] = !sideOpen[k]; store.set("imyong-side", sideOpen); set(); }; });
 // 검색 칸: 넓은 화면은 왼쪽 메뉴(제목 아래), 휴대폰은 위쪽 띠
 const narrow = matchMedia("(max-width:820px)"), placeSearch = () => { if (narrow.matches) document.querySelector("header .top").insertBefore($("sbox"), $("ask")); else document.querySelector(".side .logo").after($("sbox")); };
 placeSearch(); narrow.addEventListener("change", placeSearch);
+// 휴대폰 아래 탭: 과목·학년도·학습은 그 묶음을 아래에서 올려 보여 주고, 검색은 위쪽 검색 칸으로 간다. 고른 값은 탭 아래에 작게 남는다
+const mnav = document.createElement("div"); mnav.id = "mnav"; document.querySelector(".side").appendChild(mnav);
+const mback = document.createElement("div"); mback.id = "mback"; document.body.appendChild(mback);
+let sheet = null;
+const setSheet = k => { sheet = k && sheet !== k ? k : null; document.querySelectorAll(".sg").forEach(g => g.classList.toggle("sheet", g.dataset.k === sheet)); mback.classList.toggle("on", !!sheet); drawMnav(); };
+mback.onclick = () => setSheet(null);
+function drawMnav() {
+  const st = $("f-status").value, stName = {todo: "안 푼 문항", again: "다시 볼 것", due: "오늘 복습", done: "풀었음"}[st] || "", nDue = Q.filter(q => due(q.id)).length;
+  mnav.innerHTML = [["area", "book", "과목", $("f-area").value, ""], ["year", "cal", "학년도", $("f-year").value, ""], ["study", "target", "학습", stName, nDue ? "복습 " + nDue : ""], ["q", "search", "검색", $("f-q").value.trim(), ""]]
+    .map(([k, i, t, v, hint]) => `<button type="button" data-k="${k}" class="${v ? "on" : ""}${sheet === k ? " open" : ""}">${ic(i)}<span>${t}</span><em>${esc(v || hint)}</em></button>`).join("");
+  mnav.querySelectorAll("button").forEach(b => b.onclick = () => {
+    if (b.dataset.k === "q") { setSheet(null); window.scrollTo({top: 0}); $("f-q").focus(); } else setSheet(b.dataset.k); });
+}
 // ---- 게시판: 글 하나 = 비공개 저장소의 이슈 하나(제목 "[문항id] 종류 · 닉네임"), 답글 = 그 이슈의 댓글.
 // 열쇠(토큰)는 암호화된 자료 안에 들어 있어 비밀번호를 푼 사람만 읽고 쓸 수 있다. 로그인은 없고 닉네임만 적는다.
 const BOARD = DATA.board || null, KINDS = ["질문", "의견", "오류 제보"];
@@ -654,6 +687,7 @@ function render() {
   });
   $("list").innerHTML = html || `<div class="empty">조건에 맞는 문항이 없습니다.</div>`;
   $("list").querySelectorAll(".item").forEach(el => el.onclick = () => go(el.dataset.id));
+  drawMnav();
 }
 // 문항을 열면 주소 끝에 #q=문항 이 붙는다. 휴대폰의 '뒤로'가 목록으로 돌아가고, 문항 주소를 그대로 공유할 수 있다.
 function go(id, replace) {
@@ -744,7 +778,7 @@ const follow = () => {
   else if (rows.length) go(rows[0].id, true);
   else { history.replaceState(null, "", location.pathname + location.search); route(); }
 };
-const changed = () => { const f = {}; FIDS.forEach(id => f[id] = $(id).value); store.set("imyong-filters", f); render(); follow(); };
+const changed = () => { const f = {}; FIDS.forEach(id => f[id] = $(id).value); store.set("imyong-filters", f); if (sheet) setSheet(null); render(); follow(); };
 FIDS.forEach(id => $(id).onchange = changed);
 $("f-sort").onchange = () => { if ($("f-sort").value === "random") shuffle(); changed(); };
 $("f-q").oninput = () => { render(); follow(); };
